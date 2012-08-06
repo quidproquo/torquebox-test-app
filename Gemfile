@@ -5,7 +5,10 @@ gem 'rails', '3.2.7'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+gem 'activerecord-jdbc-adapter'
 gem 'activerecord-jdbcsqlite3-adapter'
+gem 'jdbc-mysql', require: false
+gem 'activerecord-jdbcmysql-adapter'
 
 gem 'jruby-openssl'
 gem 'json'
