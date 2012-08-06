@@ -5,8 +5,13 @@
 # gem 'activerecord-jdbcsqlite3-adapter'
 #
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: test_app_dev
+  pool: 5
+  username: test_app
+  password: test_app
+  socket: /tmp/mysql.sock
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
