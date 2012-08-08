@@ -1,4 +1,6 @@
 TestApp::Application.routes.draw do
+  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
+
   resources :dimensions
 
   # The priority is based upon order of creation:

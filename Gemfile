@@ -5,13 +5,20 @@ gem 'rails', '3.2.7'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+# Database:
 gem 'activerecord-jdbc-adapter'
 gem 'activerecord-jdbcsqlite3-adapter'
 gem 'jdbc-mysql', require: false
 gem 'activerecord-jdbcmysql-adapter'
 
+# Torquebox
+gem 'torquebox-transactions'
+
 gem 'jruby-openssl'
 gem 'json'
+
+# Engines:
+gem 'rails_admin'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -41,3 +48,6 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug'
+
+
+gem "devise"
