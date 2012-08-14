@@ -13,6 +13,7 @@ gem 'activerecord-jdbcmysql-adapter'
 
 # Torquebox
 gem 'torquebox-transactions'
+gem 'torquebox-messaging'
 
 gem 'jruby-openssl'
 gem 'json'
