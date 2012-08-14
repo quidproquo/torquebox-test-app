@@ -13,12 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20120808033216) do
 
-  create_table "dimensions", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
   create_table "rails_admin_histories", :force => true do |t|
     t.text     "message"
     t.string   "username"
