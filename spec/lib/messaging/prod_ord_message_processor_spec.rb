@@ -4,19 +4,6 @@ require 'lib/messaging/prod_ord_message_processor'
 
 describe ProdOrdMessageProcessor do
 
-  before do
-    ProdOrdMessageProcessor.any_instance.stub(:process_sent_order_ids) { |ids|
-      orders.find(ids).each { |order|
-        order.status = 'pending'
-        order.save!
-      }
-    }
-  end
-
-  after do
-    ProdOrdMessageProcessor.any_instance.unstub(:process_sent_order_ids)
-  end
-
   subject { ProdOrdMessageProcessor.new }
 
   describe :initialize do
@@ -28,28 +15,49 @@ describe ProdOrdMessageProcessor do
 
   end #initialize
 
+  describe :modules do
+    it { should respond_to(:process_sent_order_ids) }
+    it { should respond_to(:process_cancelled_order_ids) }
+  end
+
   describe :methods do
 
     describe :on_message do
-      let(:orders) { nil }
+      let(:orders) { 3.times.collect { create(:order) } }
       let(:order_ids) { orders.collect(&:id) }
-      let(:message) { nil }
+      let(:message_type) { nil }
+      let(:message) { {type: message_type, order_ids: order_ids} }
       let(:on_message_result) { subject.on_message(message) }
 
       context :sent_orders do
-        let(:message) { {type: 'sent_orders', order_ids: order_ids} }
+        let(:message_type) { 'sent_orders' }
+        before do
+          subject.should_receive(:process_sent_order_ids).with(order_ids)
+        end
 
         context :buy_order_message do
           let(:orders) { [create(:buy_market_order)] }
-          before do
-            subject.should_receive(:process_sent_order_ids).with(order_ids)
-          end
           it 'should process the message' do
             on_message_result.should == true
           end
         end
 
       end #sent_orders
+
+      context :cancelled_orders do
+        let(:message_type) { 'cancelled_orders' }
+        before do
+          subject.should_receive(:process_cancelled_order_ids).with(order_ids)
+        end
+
+        context :buy_order_message do
+          let(:orders) { [create(:buy_market_order)] }
+          it 'should process the message' do
+            on_message_result.should == true
+          end
+        end
+
+      end #cancelled_orders
 
     end #on_message
 
