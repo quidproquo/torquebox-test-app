@@ -18,4 +18,10 @@ describe SillyReverse do
     a.should == '!dlroW ,olleH'
   end
 
+  it 'should perform reverse on string' do
+    a = 'Hello, Worlds!'
+    a.silly_reverse!
+    a.should == '!sdlroW ,olleH'
+  end
+
 end
