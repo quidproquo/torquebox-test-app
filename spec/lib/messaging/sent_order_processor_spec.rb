@@ -23,9 +23,11 @@ describe SentOrderProcessor do
   describe :methods do
 
     describe :process_sent_order_ids do
-      let(:orders) { 3.times.collect { create(:order) } }
+      let(:product) { create(:product) }
+      let(:order_book) { [] }
+      let(:orders) { [] }
       let(:order_ids) { orders.collect(&:id) }
-      let(:process_result) { subject.process_sent_order_ids(order_ids) }
+      let(:process_result) { subject.process_sent_order_ids(product.id, order_ids) }
       let(:trades) { Trade.all }
 
       context :buy_order_message do
@@ -35,25 +37,36 @@ describe SentOrderProcessor do
         end
       end
 
-      context 'buy_limit_order' do
-        let(:order) { create(:buy_limit_order) }
+      context 'single sent buy limit order' do
+        let(:price) { 0.5 }
+        let(:quantity) { 100 }
+        let(:order) { create(:sent_buy_limit_order, price: price, quantity: quantity, product: product) }
         let(:orders) { [order] }
 
-        context 'with single sell limit order in the book' do
+        context 'with single pending sell limit order' do
+          let(:pending_limit_order_price) { nil }
+          let(:pending_limit_order_quantity) { nil }
+          let(:pending_limit_order) { @pending_limit_order }
+          let(:order_book) { [pending_limit_order] }
           before do
-            create(:sell_limit_order, status: 'pending', product: order.product)
+            @pending_limit_order = create(:pending_sell_limit_order, price: pending_limit_order_price, quantity: pending_limit_order_quantity, product: order.product)
           end
-          it 'should process the order and create a trade' do
-            process_result.should == true
-            trades.length.should == 2
+
+          context 'where pending sell limit order has same price and quantity' do
+            let(:pending_limit_order_price) { order.price }
+            let(:pending_limit_order_quantity) { order.quantity }
+            it 'should process the order and create trades' do
+              process_result.should == true
+              trades.length.should == 1
+            end
           end
 
         end
 
-      end
+      end # single sent buy limit order
 
-    end #process_sent_order_ids
+    end # process_sent_order_ids
 
-  end #methods
+  end # methods
 
 end

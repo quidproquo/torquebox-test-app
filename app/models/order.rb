@@ -5,8 +5,12 @@ class Order < ActiveRecord::Base
   belongs_to :product
   belongs_to :account
 
+  # Misc mappings:
+  self.inheritance_column = :ruby_type
+
   # Validations:
   validates_presence_of :status
+  validates_presence_of :type
   validates_presence_of :side
   validates_presence_of :price
   validates_presence_of :original_quantity

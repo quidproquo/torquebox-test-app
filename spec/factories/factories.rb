@@ -22,48 +22,57 @@ FactoryGirl.define do
     # Associations:
     product { create(:product) }
     account { create(:account) }
-  end
 
-  factory :buy_market_order, class: Order do
-    # Fields:
-    status { 'draft' }
-    side { 'buy' }
-    type { 'market' }
-    price { Random.rand(0.1..1.0) }
-    original_quantity { 100 }
-    pending_quantity { 100 }
+    factory :buy_order do
+      side { 'buy' }
 
-    # Associations:
-    product { create(:product) }
-    account { create(:account) }
-  end
-  
-  factory :buy_limit_order, class: Order do
-    # Fields:
-    status { 'draft' }
-    side { 'buy' }
-    type { 'limit' }
-    price { Random.rand(0.1..1.0) }
-    original_quantity { 100 }
-    pending_quantity { 100 }
+      factory :buy_market_order do
+        type { 'market' }
 
-    # Associations:
-    product { create(:product) }
-    account { create(:account) }
-  end
-  
-  factory :sell_limit_order, class: Order do
-    # Fields:
-    status { 'draft' }
-    side { 'sell' }
-    type { 'limit' }
-    price { Random.rand(0.1..1.0) }
-    original_quantity { 100 }
-    pending_quantity { 100 }
+        factory :sent_buy_market_order do
+          status { 'sent' }
+        end
+      end
 
-    # Associations:
-    product { create(:product) }
-    account { create(:account) }
-  end
+      factory :buy_limit_order do
+        type { 'limit' }
+
+        factory :sent_buy_limit_order do
+          status { 'sent' }
+        end
+      end
+
+    end # buy_order
+
+    factory :sell_order do
+      side { 'sell' }
+
+      factory :sell_market_order do
+        type { 'market' }
+
+        factory :sent_sell_market_order do
+          status { 'sent' }
+        end
+
+        factory :pending_sell_market_order do
+          status { 'pending' }
+        end
+      end
+
+      factory :sell_limit_order do
+        type { 'limit' }
+
+        factory :sent_sell_limit_order do
+          status { 'sent' }
+        end
+
+        factory :pending_sell_limit_order do
+          status { 'pending' }
+        end
+      end
+
+    end # buy_order
+
+  end # order
 
 end

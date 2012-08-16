@@ -40,6 +40,20 @@ describe Order do
         
       end # status
     
+      context :type do
+        
+        context :nil do
+          subject { build(:order, type: nil) }
+          it { should_not be_valid }
+        end
+        
+        context :blank do
+          subject { build(:order, type: '') }
+          it { should_not be_valid }
+        end
+        
+      end # type
+    
       context :side do
         
         context :nil do
@@ -106,6 +120,18 @@ describe Order do
     end # associations
 
   end # validation
+
+  describe :crud do
+
+    describe :save do
+      it 'should save and get from db' do
+        order = create(:buy_market_order)
+        order.save!
+        Order.find(order.id).should == order
+      end
+    end
+  
+  end # crud
 
   describe :properties do
   
