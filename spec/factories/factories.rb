@@ -23,6 +23,7 @@ FactoryGirl.define do
     product { create(:product) }
     account { create(:account) }
 
+    # Sub-factories:
     factory :buy_order do
       side { 'buy' }
 
@@ -32,6 +33,10 @@ FactoryGirl.define do
         factory :sent_buy_market_order do
           status { 'sent' }
         end
+        
+        factory :pending_buy_market_order do
+          status { 'pending' }
+        end
       end
 
       factory :buy_limit_order do
@@ -39,6 +44,10 @@ FactoryGirl.define do
 
         factory :sent_buy_limit_order do
           status { 'sent' }
+        end
+        
+        factory :pending_buy_limit_order do
+          status { 'pending' }
         end
       end
 
