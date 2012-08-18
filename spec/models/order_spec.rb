@@ -164,8 +164,8 @@ describe Order do
 
           context 'when other order is sent before subject order' do
             let(:other_date_sent) { subject.date_sent - 1 }
-            it { comparison.should == -1 }
-            it { inverse_comparison.should == 1 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
           end
 
           context 'when other order is sent at same time as subject order' do
@@ -182,8 +182,8 @@ describe Order do
 
           context 'when other order is sent after time as subject order' do
             let(:other_date_sent) { subject.date_sent + 1 }
-            it { comparison.should == 1 }
-            it { inverse_comparison.should == -1 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
           end
 
         end # buy market orders
@@ -195,8 +195,8 @@ describe Order do
 
           context 'when other order is sent before subject order' do
             let(:other_date_sent) { subject.date_sent - 1 }
-            it { comparison.should == -1 }
-            it { inverse_comparison.should == 1 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
           end
 
           context 'when other order is sent at same time as subject order' do
@@ -213,8 +213,8 @@ describe Order do
 
           context 'when other order is sent after time as subject order' do
             let(:other_date_sent) { subject.date_sent + 1 }
-            it { comparison.should == 1 }
-            it { inverse_comparison.should == -1 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
           end
 
         end # sell market orders
@@ -231,8 +231,8 @@ describe Order do
 
           context 'when other order price is less than subject order price' do
             let(:other_price) { subject.price * 0.99 }
-            it { comparison.should == 1 }
-            it { inverse_comparison.should == -1 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
           end
 
           context 'when other order price is same as subject order price' do
@@ -240,8 +240,8 @@ describe Order do
 
             context 'when other order was sent before subject order' do
               let(:other_date_sent) { subject.date_sent - 1 }
-              it { comparison.should == -1 }
-              it { inverse_comparison.should == 1 }
+              it { comparison.should == 1 }
+              it { inverse_comparison.should == -1 }
             end
 
             context 'when other order was sent at same time as subject order' do
@@ -252,8 +252,8 @@ describe Order do
 
             context 'when other order was sent after subject order' do
               let(:other_date_sent) { subject.date_sent + 1 }
-              it { comparison.should == 1 }
-              it { inverse_comparison.should == -1 }
+              it { comparison.should == -1 }
+              it { inverse_comparison.should == 1 }
             end
           end
 
@@ -265,8 +265,24 @@ describe Order do
 
           context 'when other order price is greater than subject order price' do
             let(:other_price) { subject.price * 1.01 }
-            it { comparison.should == -1 }
-            it { inverse_comparison.should == 1 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
+          end
+
+          context 'sorting in an array' do
+            let(:date_sent) { Date.new }
+            let(:orders) { [] }
+            subject { orders.sort }
+
+            context 'with orders not in order' do
+              let(:orders) { [
+                create(:sent_buy_limit_order, price: 0.1, date_sent: date_sent),
+                create(:sent_buy_limit_order, price: 0.2, date_sent: date_sent),
+                create(:sent_buy_limit_order, price: 0.2, date_sent: date_sent - 1),
+                create(:sent_buy_limit_order, price: 0.15, date_sent: date_sent)
+              ] }
+              it { should == [orders[2], orders[1], orders[3], orders[0]] }
+            end
           end
 
         end # buy limit orders
@@ -279,8 +295,8 @@ describe Order do
 
           context 'when other order price is less than subject order price' do
             let(:other_price) { subject.price * 0.99 }
-            it { comparison.should == -1 }
-            it { inverse_comparison.should == 1 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
           end
 
           context 'when other order price is same as subject order price' do
@@ -288,8 +304,8 @@ describe Order do
 
             context 'when other order was sent before subject order' do
               let(:other_date_sent) { subject.date_sent - 1 }
-              it { comparison.should == -1 }
-              it { inverse_comparison.should == 1 }
+              it { comparison.should == 1 }
+              it { inverse_comparison.should == -1 }
             end
 
             context 'when other order was sent at same time as subject order' do
@@ -300,8 +316,8 @@ describe Order do
 
             context 'when other order was sent after subject order' do
               let(:other_date_sent) { subject.date_sent + 1 }
-              it { comparison.should == 1 }
-              it { inverse_comparison.should == -1 }
+              it { comparison.should == -1 }
+              it { inverse_comparison.should == 1 }
             end
           end
 
@@ -313,8 +329,24 @@ describe Order do
 
           context 'when other order price is greater than subject order price' do
             let(:other_price) { subject.price * 1.01 }
-            it { comparison.should == 1 }
-            it { inverse_comparison.should == -1 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
+          end
+
+          context 'sorting in an array' do
+            let(:date_sent) { Date.new }
+            let(:orders) { [] }
+            subject { orders.sort }
+
+            context 'with orders not in order' do
+              let(:orders) { [
+                create(:sent_sell_limit_order, price: 0.1, date_sent: date_sent),
+                create(:sent_sell_limit_order, price: 0.2, date_sent: date_sent),
+                create(:sent_sell_limit_order, price: 0.2, date_sent: date_sent - 1),
+                create(:sent_sell_limit_order, price: 0.15, date_sent: date_sent)
+              ] }
+              it { should == [orders[0], orders[3], orders[2], orders[1]] }
+            end
           end
 
         end # sell limit orders

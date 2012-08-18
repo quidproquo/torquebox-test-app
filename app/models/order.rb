@@ -54,12 +54,12 @@ class Order < ActiveRecord::Base
   private
 
   def date_compare(other)
-    -(self.date_sent <=> other.date_sent)
+    self.date_sent <=> other.date_sent
   end
 
 
   def price_compare(other)
-    (self.price <=> other.price) * (self.side == 'buy' ? 1 : -1)
+    (self.price <=> other.price) * (self.side == 'buy' ? -1 : 1)
   end
 
 end
