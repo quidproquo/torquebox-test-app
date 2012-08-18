@@ -147,4 +147,128 @@ describe Order do
 
   end
 
+  describe :object_methods do
+
+    describe :<=> do
+      let(:other) { nil }
+      let(:comparison) { subject <=> other }
+      let(:inverse_comparison) { other <=> subject }
+      subject { nil }
+
+      context 'market orders' do
+
+        context 'buy market orders' do
+          let(:other_date_sent) { nil }
+          let(:other) { create(:sent_buy_market_order, date_sent: other_date_sent) }
+          subject { create(:sent_buy_market_order) }
+
+          context 'when other order is sent before subject order' do
+            let(:other_date_sent) { subject.date_sent - 1 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
+          end
+
+          context 'when other order is sent at same time as subject order' do
+            let(:other_date_sent) { subject.date_sent }
+            it { comparison.should == 0 }
+            it { inverse_comparison.should == 0 }
+          end
+
+          context 'when other order is the same as subject order' do
+            let(:other) { subject }
+            it { comparison.should == 0 }
+            it { inverse_comparison.should == 0 }
+          end
+
+          context 'when other order is sent after time as subject order' do
+            let(:other_date_sent) { subject.date_sent + 1 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
+          end
+
+        end # buy market orders
+
+        context 'sell market orders' do
+          let(:other_date_sent) { nil }
+          let(:other) { create(:sent_sell_market_order, date_sent: other_date_sent) }
+          subject { create(:sent_sell_market_order) }
+
+          context 'when other order is sent before subject order' do
+            let(:other_date_sent) { subject.date_sent - 1 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
+          end
+
+          context 'when other order is sent at same time as subject order' do
+            let(:other_date_sent) { subject.date_sent }
+            it { comparison.should == 0 }
+            it { inverse_comparison.should == 0 }
+          end
+
+          context 'when other order is the same as subject order' do
+            let(:other) { subject }
+            it { comparison.should == 0 }
+            it { inverse_comparison.should == 0 }
+          end
+
+          context 'when other order is sent after time as subject order' do
+            let(:other_date_sent) { subject.date_sent + 1 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
+          end
+
+        end # sell market orders
+
+      end # market orders
+
+      context 'limit orders' do
+
+        context 'buy limit orders' do
+          let(:other_date_sent) { subject.date_sent }
+          let(:other_price) { nil }
+          let(:other) { create(:sent_buy_limit_order, price: other_price, date_sent: other_date_sent) }
+          subject { create(:sent_buy_limit_order) }
+
+          context 'when other order price is less than subject order price' do
+            let(:other_price) { subject.price * 0.99 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
+          end
+
+          context 'when other order price is same as subject order price' do
+            let(:other_price) { subject.price }
+
+            context 'when other order was sent before subject order' do
+              let(:other_date_sent) { subject.date_sent - 1 }
+              it { comparison.should == -1 }
+              it { inverse_comparison.should == 1 }
+            end
+
+            context 'when other order was sent at same time as subject order' do
+              let(:other_date_sent) { subject.date_sent }
+              it { comparison.should_not == 0 }
+              it { inverse_comparison.should_not == 0 }
+            end
+          end
+
+          context 'when other order is the same as subject order' do
+            let(:other) { subject }
+            it { comparison.should == 0 }
+            it { inverse_comparison.should == 0 }
+          end
+
+          context 'when other order price is greater than subject order price' do
+            let(:other_price) { subject.price * 1.01 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
+          end
+
+        end # buy limit orders
+
+      end # limit orders
+
+    end # <=>
+
+  end # object methods
+
 end

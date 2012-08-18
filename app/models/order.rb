@@ -20,13 +20,34 @@ class Order < ActiveRecord::Base
   validates_presence_of :account
 
 
-  # Properties
+  # Properties:
+
   def quantity=(value)
     self.original_quantity = self.pending_quantity = value
   end
 
   def quantity
     self.original_quantity
+  end
+
+
+  # Object methods:
+
+  def <=>(other)
+    case other.type
+    when 'market'
+      -(self.date_sent <=> other.date_sent)
+    when 'limit'
+      if (price_compare = self.price <=> other.price) == 0
+        if (date_compare = -(self.date_sent <=> other.date_sent)) == 0
+          self.id <=> other.id
+        else
+          date_compare
+        end
+      else
+        price_compare
+      end
+    end
   end
 
 end

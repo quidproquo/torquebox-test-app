@@ -32,6 +32,7 @@ FactoryGirl.define do
 
         factory :sent_buy_market_order do
           status { 'sent' }
+          date_sent { Date.current }
         end
         
         factory :pending_buy_market_order do
@@ -44,6 +45,7 @@ FactoryGirl.define do
 
         factory :sent_buy_limit_order do
           status { 'sent' }
+          date_sent { Date.current }
         end
         
         factory :pending_buy_limit_order do
@@ -61,6 +63,7 @@ FactoryGirl.define do
 
         factory :sent_sell_market_order do
           status { 'sent' }
+          date_sent { Date.current }
         end
 
         factory :pending_sell_market_order do
@@ -73,6 +76,7 @@ FactoryGirl.define do
 
         factory :sent_sell_limit_order do
           status { 'sent' }
+          date_sent { Date.current }
         end
 
         factory :pending_sell_limit_order do

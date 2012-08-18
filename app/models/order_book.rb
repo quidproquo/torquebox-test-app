@@ -1,3 +1,5 @@
+require 'lib/collections/tree_set'
+
 class OrderBook
 
   attr_reader :product
@@ -18,11 +20,11 @@ class OrderBook
   end
 
   def buy_market_orders
-    @buy_market_orders ||= []
+    @buy_market_orders ||= TreeSet.new
   end
 
   def buy_limit_orders
-    @buy_limit_orders ||= []
+    @buy_limit_orders ||= TreeSet.new
   end
 
   def sell_orders
@@ -30,11 +32,11 @@ class OrderBook
   end
 
   def sell_market_orders
-    @sell_market_orders ||= []
+    @sell_market_orders ||= TreeSet.new
   end
 
   def sell_limit_orders
-    @sell_limit_orders ||= []
+    @sell_limit_orders ||= TreeSet.new
   end
 
 
