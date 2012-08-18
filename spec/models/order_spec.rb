@@ -274,7 +274,7 @@ describe Order do
             let(:orders) { [] }
             subject { orders.sort }
 
-            context 'with orders not in order' do
+            context 'with orders not in sorted order' do
               let(:orders) { [
                 create(:sent_buy_limit_order, price: 0.1, date_sent: date_sent),
                 create(:sent_buy_limit_order, price: 0.2, date_sent: date_sent),
@@ -338,7 +338,7 @@ describe Order do
             let(:orders) { [] }
             subject { orders.sort }
 
-            context 'with orders not in order' do
+            context 'with orders not in sorted order' do
               let(:orders) { [
                 create(:sent_sell_limit_order, price: 0.1, date_sent: date_sent),
                 create(:sent_sell_limit_order, price: 0.2, date_sent: date_sent),
