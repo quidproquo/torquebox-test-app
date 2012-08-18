@@ -249,6 +249,12 @@ describe Order do
               it { comparison.should_not == 0 }
               it { inverse_comparison.should_not == 0 }
             end
+
+            context 'when other order was sent after subject order' do
+              let(:other_date_sent) { subject.date_sent + 1 }
+              it { comparison.should == 1 }
+              it { inverse_comparison.should == -1 }
+            end
           end
 
           context 'when other order is the same as subject order' do
@@ -264,6 +270,54 @@ describe Order do
           end
 
         end # buy limit orders
+
+        context 'sell limit orders' do
+          let(:other_date_sent) { subject.date_sent }
+          let(:other_price) { nil }
+          let(:other) { create(:sent_sell_limit_order, price: other_price, date_sent: other_date_sent) }
+          subject { create(:sent_sell_limit_order) }
+
+          context 'when other order price is less than subject order price' do
+            let(:other_price) { subject.price * 0.99 }
+            it { comparison.should == -1 }
+            it { inverse_comparison.should == 1 }
+          end
+
+          context 'when other order price is same as subject order price' do
+            let(:other_price) { subject.price }
+
+            context 'when other order was sent before subject order' do
+              let(:other_date_sent) { subject.date_sent - 1 }
+              it { comparison.should == -1 }
+              it { inverse_comparison.should == 1 }
+            end
+
+            context 'when other order was sent at same time as subject order' do
+              let(:other_date_sent) { subject.date_sent }
+              it { comparison.should_not == 0 }
+              it { inverse_comparison.should_not == 0 }
+            end
+
+            context 'when other order was sent after subject order' do
+              let(:other_date_sent) { subject.date_sent + 1 }
+              it { comparison.should == 1 }
+              it { inverse_comparison.should == -1 }
+            end
+          end
+
+          context 'when other order is the same as subject order' do
+            let(:other) { subject }
+            it { comparison.should == 0 }
+            it { inverse_comparison.should == 0 }
+          end
+
+          context 'when other order price is greater than subject order price' do
+            let(:other_price) { subject.price * 1.01 }
+            it { comparison.should == 1 }
+            it { inverse_comparison.should == -1 }
+          end
+
+        end # sell limit orders
 
       end # limit orders
 

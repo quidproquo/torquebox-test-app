@@ -34,20 +34,32 @@ class Order < ActiveRecord::Base
   # Object methods:
 
   def <=>(other)
-    case other.type
+    case self.type
     when 'market'
-      -(self.date_sent <=> other.date_sent)
+      date_compare(other)
     when 'limit'
-      if (price_compare = self.price <=> other.price) == 0
-        if (date_compare = -(self.date_sent <=> other.date_sent)) == 0
+      if (comparison = price_compare(other)) == 0
+        if (comparison = date_compare(other)) == 0
           self.id <=> other.id
         else
-          date_compare
+          comparison
         end
       else
-        price_compare
+        comparison
       end
     end
+  end
+
+
+  private
+
+  def date_compare(other)
+    -(self.date_sent <=> other.date_sent)
+  end
+
+
+  def price_compare(other)
+    (self.price <=> other.price) * (self.side == 'buy' ? 1 : -1)
   end
 
 end
