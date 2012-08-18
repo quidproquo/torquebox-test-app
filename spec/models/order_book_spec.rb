@@ -68,6 +68,59 @@ describe OrderBook do
 
     end
 
+    describe :remove_order do
+      let(:order) { create(:order) }
+      before do
+        subject.add_order(order)
+        subject.remove_order(order)
+      end
+      
+      context 'when order is a buy market order' do
+        let(:order) { create(:pending_buy_market_order) }
+        it { should have(0).orders }
+        it { should have(0).buy_orders }
+        it { should have(0).buy_market_orders }
+        it { should have(0).buy_limit_orders }
+        it { should have(0).sell_orders }
+        it { should have(0).sell_market_orders }
+        it { should have(0).sell_limit_orders }
+      end
+      
+      context 'when order is a buy limit order' do
+        let(:order) { create(:pending_buy_limit_order) }
+        it { should have(0).orders }
+        it { should have(0).buy_orders }
+        it { should have(0).buy_market_orders }
+        it { should have(0).buy_limit_orders }
+        it { should have(0).sell_orders }
+        it { should have(0).sell_market_orders }
+        it { should have(0).sell_limit_orders }
+      end
+      
+      context 'when order is a sell market order' do
+        let(:order) { create(:pending_sell_market_order) }
+        it { should have(0).orders }
+        it { should have(0).buy_orders }
+        it { should have(0).buy_market_orders }
+        it { should have(0).buy_limit_orders }
+        it { should have(0).sell_orders }
+        it { should have(0).sell_market_orders }
+        it { should have(0).sell_limit_orders }
+      end
+      
+      context 'when order is a sell limit order' do
+        let(:order) { create(:pending_sell_limit_order) }
+        it { should have(0).orders }
+        it { should have(0).buy_orders }
+        it { should have(0).buy_market_orders }
+        it { should have(0).buy_limit_orders }
+        it { should have(0).sell_orders }
+        it { should have(0).sell_market_orders }
+        it { should have(0).sell_limit_orders }
+      end
+
+    end
+
   end
 
 end

@@ -7,7 +7,7 @@ class OrderBook
   end
 
 
-  # Properties
+  # Properties:
   
   def orders
     @orders ||= []
@@ -47,8 +47,16 @@ class OrderBook
       add_buy_order(order)
     when 'sell'
       add_sell_order(order)
-    else
-      raise "Unknown order side: #{order.side} for order: #{order}"
+    end
+  end
+
+  def remove_order(order)
+    orders.delete(order)
+    case order.side
+    when 'buy'
+      remove_buy_order(order)
+    when 'sell'
+      remove_sell_order(order)
     end
   end
 
@@ -74,6 +82,26 @@ class OrderBook
       sell_market_orders << sell_order
     when 'limit'
       sell_limit_orders << sell_order
+    end
+  end
+
+  def remove_buy_order(buy_order)
+    buy_orders.delete(buy_order)
+    case buy_order.type
+    when 'market'
+      buy_market_orders.delete(buy_order)
+    when 'limit'
+      buy_limit_orders.delete(buy_order)
+    end
+  end
+
+  def remove_sell_order(sell_order)
+    sell_orders.delete(sell_order)
+    case sell_order.type
+    when 'market'
+      sell_market_orders.delete(sell_order)
+    when 'limit'
+      sell_limit_orders.delete(sell_order)
     end
   end
 
