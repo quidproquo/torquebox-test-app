@@ -35,7 +35,7 @@ class TreeSet < Array
 
   # Methods:
   
-  def get_head_set(v, inclusive)
+  def get_head_set(v, inclusive = true)
     last_index = nil
     if inclusive
       last_index = rindex { |x| comparator.call(x, v) <= 0 } || -1

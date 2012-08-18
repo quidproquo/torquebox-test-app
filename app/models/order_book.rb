@@ -52,6 +52,12 @@ class OrderBook
     end
   end
 
+  def add_orders(orders)
+    orders.each { |order|
+      add_order(order)
+    }
+  end
+
   def remove_order(order)
     orders.delete(order)
     case order.side
@@ -60,6 +66,23 @@ class OrderBook
     when 'sell'
       remove_sell_order(order)
     end
+  end
+
+  def get_matching_orders(order)
+    case order.type
+    when 'market'
+    when 'limit'
+      case order.side
+      when 'buy'
+        get_matching_sell_limit_orders(order)
+      when 'sell'
+        get_matching_buy_limit_orders(order)
+      end
+    end
+  end
+
+  def get_matching_sell_limit_orders(order)
+    sell_limit_orders.get_head_set(order)
   end
 
   

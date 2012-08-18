@@ -66,7 +66,7 @@ describe OrderBook do
         it { should have(1).sell_limit_orders }
       end
 
-    end
+    end # add_order
 
     describe :remove_order do
       let(:order) { create(:order) }
@@ -119,7 +119,34 @@ describe OrderBook do
         it { should have(0).sell_limit_orders }
       end
 
-    end
+    end # remove_order
+
+    describe :get_matching_orders do
+      let(:order) { nil }
+      let(:orders) { [] }
+      let(:matching_orders) { subject.get_matching_orders(order) }
+      before { subject.add_orders(orders) }
+
+      context 'limit order' do
+
+        context 'buy limit order' do
+          let(:order) { create(:sent_buy_limit_order) }
+
+          context 'sell limit orders in book' do
+            let(:orders) { [
+              create(:sell_limit_order, price: order.price * 0.80),
+              create(:sell_limit_order, price: order.price * 0.70),
+              create(:sell_limit_order, price: order.price * 1.01),
+              create(:sell_limit_order, price: order.price * 1.25),
+            ]}
+            it { matching_orders.should == [orders[1], orders[0]] }
+          end
+
+        end # sell limit order
+
+      end # limit order
+
+    end # get_matching_orders
 
   end
 
