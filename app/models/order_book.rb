@@ -2,10 +2,17 @@ require 'lib/collections/tree_set'
 
 class OrderBook
 
+  def self.find_by_product_id(product_id)
+    product = Product.find(product_id)
+    pending_orders = Order.get_pending_orders(product)
+    OrderBook.new(product, pending_orders) 
+  end
+
   attr_reader :product
 
-  def initialize(product_id)
-    @product = Product.find(product_id)
+  def initialize(product, pending_orders = [])
+    @product = product
+    add_orders(pending_orders)
   end
 
 

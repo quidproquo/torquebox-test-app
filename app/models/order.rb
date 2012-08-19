@@ -39,6 +39,7 @@ class Order < ActiveRecord::Base
       date_compare(other)
     when 'limit'
       if (comparison = price_compare(other)) == 0
+        return 0 unless self.side == other.side
         if (comparison = date_compare(other)) == 0
           self.id <=> other.id
         else
@@ -48,6 +49,13 @@ class Order < ActiveRecord::Base
         comparison
       end
     end
+  end
+
+
+  # Class methods:
+
+  def self.get_pending_orders(product)
+    Order.where(product_id: product.id, status: 'pending')
   end
 
 

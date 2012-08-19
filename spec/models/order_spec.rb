@@ -255,7 +255,31 @@ describe Order do
               it { comparison.should == -1 }
               it { inverse_comparison.should == 1 }
             end
-          end
+
+            context 'when other order is a sell limit order with same price' do
+              let(:other) { create(:sent_sell_limit_order, price: other_price, date_sent: other_date_sent) }
+
+              context 'when other orders date sent is before' do
+                let(:other_date_sent) { subject.date_sent - 1 }
+                it { comparison.should == 0 }
+                it { inverse_comparison.should == 0 }
+              end
+
+              context 'when other orders date sent at same time' do
+                let(:other_date_sent) { subject.date_sent }
+                it { comparison.should == 0 }
+                it { inverse_comparison.should == 0 }
+              end
+
+              context 'when other orders date sent is after' do
+                let(:other_date_sent) { subject.date_sent + 1 }
+                it { comparison.should == 0 }
+                it { inverse_comparison.should == 0 }
+              end
+
+            end # other order is different side
+
+          end # orders are same price
 
           context 'when other order is the same as subject order' do
             let(:other) { subject }
@@ -319,6 +343,29 @@ describe Order do
               it { comparison.should == -1 }
               it { inverse_comparison.should == 1 }
             end
+
+            context 'when other order is a sell limit order with same price' do
+              let(:other) { create(:sent_buy_limit_order, price: other_price, date_sent: other_date_sent) }
+
+              context 'when other orders date sent is before' do
+                let(:other_date_sent) { subject.date_sent - 1 }
+                it { comparison.should == 0 }
+                it { inverse_comparison.should == 0 }
+              end
+
+              context 'when other orders date sent at same time' do
+                let(:other_date_sent) { subject.date_sent }
+                it { comparison.should == 0 }
+                it { inverse_comparison.should == 0 }
+              end
+
+              context 'when other orders date sent is after' do
+                let(:other_date_sent) { subject.date_sent + 1 }
+                it { comparison.should == 0 }
+                it { inverse_comparison.should == 0 }
+              end
+
+            end # other order is different side
           end
 
           context 'when other order is the same as subject order' do
@@ -356,5 +403,27 @@ describe Order do
     end # <=>
 
   end # object methods
+
+  describe :class_methods do
+
+    describe :get_pending_orders do
+      let(:product) { create(:product) }
+      let(:orders) { [] }
+      subject { Order.get_pending_orders(product) }
+
+      context 'some pending orders' do
+        let(:orders) { [
+          create(:pending_buy_limit_order, product: product),
+          create(:pending_sell_limit_order, product: product),
+          create(:sent_buy_market_order, product: product),
+          create(:pending_sell_limit_order, product: product),
+          create(:pending_sell_limit_order),
+        ] }
+        it { should == [orders[0], orders[1], orders[3]] }
+      end
+
+    end
+
+  end
 
 end
