@@ -85,6 +85,10 @@ class OrderBook
     sell_limit_orders.get_head_set(order)
   end
 
+  def get_matching_buy_limit_orders(order)
+    buy_limit_orders.get_head_set(order)
+  end
+
   
   protected
 

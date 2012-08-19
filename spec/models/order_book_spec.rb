@@ -128,18 +128,66 @@ describe OrderBook do
       before { subject.add_orders(orders) }
 
       context 'limit order' do
+        let(:order_price) { nil }
 
         context 'buy limit order' do
-          let(:order) { create(:sent_buy_limit_order) }
+          let(:order) { create(:pending_buy_limit_order, price: order_price) }
 
           context 'sell limit orders in book' do
             let(:orders) { [
-              create(:sell_limit_order, price: order.price * 0.80),
-              create(:sell_limit_order, price: order.price * 0.70),
-              create(:sell_limit_order, price: order.price * 1.01),
-              create(:sell_limit_order, price: order.price * 1.25),
-            ]}
-            it { matching_orders.should == [orders[1], orders[0]] }
+              create(:pending_sell_limit_order, price: 0.25),
+              create(:pending_sell_limit_order, price: 0.35),
+              create(:pending_sell_limit_order, price: 0.40),
+              create(:pending_sell_limit_order, price: 0.50),
+              create(:pending_sell_limit_order, price: 0.60)
+            ] }
+
+            context 'order price doesnt match order book prices' do
+              let(:order_price) { 0.10 }
+              it { matching_orders.should == [] }
+            end
+
+            context 'order price falls in middle of order book prices' do
+              let(:order_price) { 0.40 }
+              it { matching_orders.should == [orders[0], orders[1], orders[2]] }
+            end
+
+            context 'order price matches all order book prices' do
+              let(:order_price) { 0.70 }
+              it { matching_orders.should == subject.sell_limit_orders }
+            end
+
+          end
+
+        end # buy limit order
+
+        context 'sell limit order' do
+          let(:order) { create(:pending_sell_limit_order, price: order_price) }
+
+          context 'buy limit orders in book' do
+            let(:orders) { [
+              create(:pending_buy_limit_order, price: 0.60),
+              create(:pending_buy_limit_order, price: 0.50),
+              create(:pending_buy_limit_order, price: 0.40),
+              create(:pending_buy_limit_order, price: 0.35),
+              create(:pending_buy_limit_order, price: 0.25)
+            ] }
+
+            context 'order price doesnt match order book prices' do
+              let(:order_price) { 0.70 }
+              it { matching_orders.should == [] }
+            end
+
+            context 'order price falls in middle of order book prices' do
+              let(:order_price) { 0.40 }
+              it { matching_orders.should == [orders[0], orders[1], orders[2]] }
+            end
+
+            context 'order price matches all order book prices' do
+              let(:order_price) { 0.10 }
+              it { matching_orders.should == subject.buy_limit_orders }
+            end
+
           end
 
         end # sell limit order

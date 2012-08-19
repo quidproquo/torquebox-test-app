@@ -54,11 +54,15 @@ class Order < ActiveRecord::Base
   private
 
   def date_compare(other)
+    raise ArgumentError, 'date_sent is null' unless self.date_sent
+    raise ArgumentError, 'date_sent is null' unless other.date_sent
     self.date_sent <=> other.date_sent
   end
 
 
   def price_compare(other)
+    raise ArgumentError, 'price is null' unless self.price
+    raise ArgumentError, 'price is null' unless other.price
     (self.price <=> other.price) * (self.side == 'buy' ? -1 : 1)
   end
 
