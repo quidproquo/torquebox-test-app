@@ -12,10 +12,9 @@ module SentOrderProcessor
       order.status = 'pending'
       matching_orders = order_book.get_matching_orders(order)
 
-      debugger
       matching_orders.each { |matching_order|
         break unless order.status == 'pending'
-        trades += order.create_trades(matching_order)
+        trades += Trade.create_trades(order, matching_order)
 
         order_book.add_order(order) if order.status == 'pending'
         order_book.remove_order(matching_order) unless matching_order.status == 'pending'

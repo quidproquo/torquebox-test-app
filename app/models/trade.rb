@@ -1,3 +1,23 @@
 class Trade < ActiveRecord::Base
-  attr_accessible :account_id, :order_id, :price, :quantity
+  
+  attr_accessible :account, :order, :price, :quantity
+
+  # Associations:
+  
+  belongs_to :account
+  belongs_to :order
+
+
+  # Class methods:
+
+  def self.create_trades(order1, order2)
+    trades = [
+      Trade.new(order: order1, price: order1.price, quantity: order1.quantity),
+      Trade.new(order: order2, price: order1.price, quantity: order1.quantity),
+    ]
+    trades.each(&:save!)
+    trades
+  end
+
+
 end
