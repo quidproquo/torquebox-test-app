@@ -5,6 +5,7 @@
 # gem 'activerecord-jdbcsqlite3-adapter'
 #
 development:
+  database: test_app_dev
   adapter: jdbc
   encoding: utf8
   username: test_app

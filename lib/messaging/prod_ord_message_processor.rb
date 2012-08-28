@@ -12,7 +12,8 @@ class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
     puts "Processing message: #{body}"
 
     type = body[:type]
-    orders = []
+    product_id = body[:product_id]
+    order_ids = body[:order_ids]
 
     if type == 'new_orders'
       side = body[:side]
@@ -20,11 +21,9 @@ class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
       quantity = body[:quantity]
       order = process_new_order(side, price, quantity)
       orders = [order]
+      order_ids = orders.collect(&:id)
       type = 'sent_orders'
     end
-
-    product_id = order.product.id
-    order_ids = orders.collect(&:id)
 
     case type
     when 'sent_orders'
@@ -32,7 +31,7 @@ class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
     when 'cancelled_orders'
       process_cancelled_order_ids(order_ids)
     end
-    
+
     puts "Processing message: #{body}!"
     true
   end

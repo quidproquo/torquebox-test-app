@@ -1,16 +1,18 @@
 class Order < ActiveRecord::Base
   #attr_accessible :account_id, :date_sent, :message, :original_quantity, :pending_quantity, :price, :product_id, :side, :status, :type
 
+  # Fields:
+  as_enum :status, { draft: 'D', open: 'O', sent: 'S', pending: 'P', filled: 'F' }
+  as_enum :order_type, { market: 'M', limit: 'L' }
+  as_enum :side, { buy: 'B', sell: 'S' }
+
   # Associations:
   belongs_to :product
   belongs_to :account
 
-  # Misc mappings:
-  self.inheritance_column = :ruby_type
-
   # Validations:
   validates_presence_of :status
-  validates_presence_of :type
+  validates_presence_of :order_type
   validates_presence_of :side
   validates_presence_of :price
   validates_presence_of :original_quantity
@@ -34,10 +36,9 @@ class Order < ActiveRecord::Base
   # Object methods:
 
   def <=>(other)
-    case self.type
-    when 'market'
+    if self.market?
       date_compare(other)
-    when 'limit'
+    elsif self.limit?
       if (comparison = price_compare(other)) == 0
         return 0 unless self.side == other.side
         if (comparison = date_compare(other)) == 0
@@ -55,7 +56,7 @@ class Order < ActiveRecord::Base
   # Class methods:
 
   def self.get_pending_orders(product)
-    Order.where(product_id: product.id, status: 'pending')
+    Order.where(product_id: product.id, status_cd: Order.pending)
   end
 
 
@@ -71,7 +72,7 @@ class Order < ActiveRecord::Base
   def price_compare(other)
     raise ArgumentError, 'price is null' unless self.price
     raise ArgumentError, 'price is null' unless other.price
-    (self.price <=> other.price) * (self.side == 'buy' ? -1 : 1)
+    (self.price <=> other.price) * (self.buy? ? -1 : 1)
   end
 
 end

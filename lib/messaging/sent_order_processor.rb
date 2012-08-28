@@ -9,15 +9,15 @@ module SentOrderProcessor
     trades = []
 
     sent_orders.each { |order|
-      order.status = 'pending'
+      order.status = Order.statuses.pending
       matching_orders = order_book.get_matching_orders(order)
 
       matching_orders.each { |matching_order|
-        break unless order.status == 'pending'
+        break unless order.pending?
         trades += Trade.create_trades(order, matching_order)
 
-        order_book.add_order(order) if order.status == 'pending'
-        order_book.remove_order(matching_order) unless matching_order.status == 'pending'
+        order_book.add_order(order) if order.pending?
+        order_book.remove_order(matching_order) unless matching_order.pending?
         matching_order.save!
       }
       order.save!

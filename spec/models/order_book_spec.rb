@@ -3,12 +3,12 @@ require 'spec_helper'
 describe OrderBook do
   let(:product) { create(:product) }
   let(:product_id) { product.id }
-  subject { OrderBook.new(product_id) }
+  subject { OrderBook.new(product) }
 
   describe :initialize do
 
     context 'with product id' do
-      subject { OrderBook.new(product_id) }
+      subject { OrderBook.new(product) }
       its(:product) { should == product }
     end
 
@@ -21,7 +21,7 @@ describe OrderBook do
       before do
         subject.add_order(order)
       end
-      
+
       context 'when order is a buy market order' do
         let(:order) { create(:pending_buy_market_order) }
         it { should have(1).orders }
@@ -32,7 +32,7 @@ describe OrderBook do
         it { should have(0).sell_market_orders }
         it { should have(0).sell_limit_orders }
       end
-      
+
       context 'when order is a buy limit order' do
         let(:order) { create(:pending_buy_limit_order) }
         it { should have(1).orders }
@@ -43,7 +43,7 @@ describe OrderBook do
         it { should have(0).sell_market_orders }
         it { should have(0).sell_limit_orders }
       end
-      
+
       context 'when order is a sell market order' do
         let(:order) { create(:pending_sell_market_order) }
         it { should have(1).orders }
@@ -54,7 +54,7 @@ describe OrderBook do
         it { should have(1).sell_market_orders }
         it { should have(0).sell_limit_orders }
       end
-      
+
       context 'when order is a sell limit order' do
         let(:order) { create(:pending_sell_limit_order) }
         it { should have(1).orders }
@@ -74,7 +74,7 @@ describe OrderBook do
         subject.add_order(order)
         subject.remove_order(order)
       end
-      
+
       context 'when order is a buy market order' do
         let(:order) { create(:pending_buy_market_order) }
         it { should have(0).orders }
@@ -85,7 +85,7 @@ describe OrderBook do
         it { should have(0).sell_market_orders }
         it { should have(0).sell_limit_orders }
       end
-      
+
       context 'when order is a buy limit order' do
         let(:order) { create(:pending_buy_limit_order) }
         it { should have(0).orders }
@@ -96,7 +96,7 @@ describe OrderBook do
         it { should have(0).sell_market_orders }
         it { should have(0).sell_limit_orders }
       end
-      
+
       context 'when order is a sell market order' do
         let(:order) { create(:pending_sell_market_order) }
         it { should have(0).orders }
@@ -107,7 +107,7 @@ describe OrderBook do
         it { should have(0).sell_market_orders }
         it { should have(0).sell_limit_orders }
       end
-      
+
       context 'when order is a sell limit order' do
         let(:order) { create(:pending_sell_limit_order) }
         it { should have(0).orders }

@@ -12,7 +12,7 @@ describe Order do
     end
 
     context :factory do
-      
+
       context :buy_market_order do
         subject { build(:buy_market_order) }
         it { should be_valid }
@@ -25,91 +25,91 @@ describe Order do
   describe :validation do
 
     context :fields do
-    
+
       context :status do
-        
+
         context :nil do
           subject { build(:order, status: nil) }
           it { should_not be_valid }
         end
-        
+
         context :blank do
           subject { build(:order, status: '') }
           it { should_not be_valid }
         end
-        
+
       end # status
-    
-      context :type do
-        
+
+      context :order_type do
+
         context :nil do
-          subject { build(:order, type: nil) }
+          subject { build(:order, order_type: nil) }
           it { should_not be_valid }
         end
-        
+
         context :blank do
-          subject { build(:order, type: '') }
+          subject { build(:order, order_type: '') }
           it { should_not be_valid }
         end
-        
-      end # type
-    
+
+      end # order_type
+
       context :side do
-        
+
         context :nil do
           subject { build(:order, side: nil) }
           it { should_not be_valid }
         end
-        
+
         context :blank do
           subject { build(:order, side: '') }
           it { should_not be_valid }
         end
-        
+
       end # side
-    
+
       context :price do
-        
+
         context :nil do
           subject { build(:order, price: nil) }
           it { should_not be_valid }
         end
-        
+
       end # price
-    
+
       context :original_quantity do
-        
+
         context :nil do
           subject { build(:order, original_quantity: nil) }
           it { should_not be_valid }
         end
-        
+
       end # original_quantity
-    
+
       context :pending_quantity do
-        
+
         context :nil do
           subject { build(:order, pending_quantity: nil) }
           it { should_not be_valid }
         end
-        
+
       end # pending_quantity
 
     end # fields
 
     context :associations do
-    
+
       context :product do
-        
+
         context :nil do
           subject { build(:order, product: nil) }
           it { should_not be_valid }
         end
 
       end
-      
+
       context :account do
-        
+
         context :nil do
           subject { build(:order, account: nil) }
           it { should_not be_valid }
@@ -130,11 +130,11 @@ describe Order do
         Order.find(order.id).should == order
       end
     end
-  
+
   end # crud
 
   describe :properties do
-  
+
     describe :quantity do
       let(:quantity) { 1000 }
       before do

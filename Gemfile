@@ -51,7 +51,8 @@ gem 'jquery-rails'
 # gem 'ruby-debug'
 
 
-gem "devise"
+gem 'devise'
+gem 'simple_enum'
 
 group :development, :test do
   gem 'factory_girl_rails'

@@ -5,7 +5,7 @@ class OrderBook
   def self.find_by_product_id(product_id)
     product = Product.find(product_id)
     pending_orders = Order.get_pending_orders(product)
-    OrderBook.new(product, pending_orders) 
+    OrderBook.new(product, pending_orders)
   end
 
   attr_reader :product
@@ -17,7 +17,7 @@ class OrderBook
 
 
   # Properties:
-  
+
   def orders
     @orders ||= []
   end
@@ -52,9 +52,9 @@ class OrderBook
   def add_order(order)
     orders << order
     case order.side
-    when 'buy'
+    when :buy
       add_buy_order(order)
-    when 'sell'
+    when :sell
       add_sell_order(order)
     end
   end
@@ -68,21 +68,21 @@ class OrderBook
   def remove_order(order)
     orders.delete(order)
     case order.side
-    when 'buy'
+    when :buy
       remove_buy_order(order)
-    when 'sell'
+    when :sell
       remove_sell_order(order)
     end
   end
 
   def get_matching_orders(order)
-    case order.type
-    when 'market'
-    when 'limit'
+    case order.order_type
+    when :market
+    when :limit
       case order.side
-      when 'buy'
+      when :buy
         get_matching_sell_limit_orders(order)
-      when 'sell'
+      when :sell
         get_matching_buy_limit_orders(order)
       end
     end
@@ -96,47 +96,47 @@ class OrderBook
     buy_limit_orders.get_head_set(order)
   end
 
-  
+
   protected
 
   # Methods:
 
   def add_buy_order(buy_order)
     buy_orders << buy_order
-    case buy_order.type
-    when 'market'
+    case buy_order.order_type
+    when :market
       buy_market_orders << buy_order
-    when 'limit'
+    when :limit
       buy_limit_orders << buy_order
     end
   end
 
   def add_sell_order(sell_order)
     sell_orders << sell_order
-    case sell_order.type
-    when 'market'
+    case sell_order.order_type
+    when :market
       sell_market_orders << sell_order
-    when 'limit'
+    when :limit
       sell_limit_orders << sell_order
     end
   end
 
   def remove_buy_order(buy_order)
     buy_orders.delete(buy_order)
-    case buy_order.type
-    when 'market'
+    case buy_order.order_type
+    when :market
       buy_market_orders.delete(buy_order)
-    when 'limit'
+    when :limit
       buy_limit_orders.delete(buy_order)
     end
   end
 
   def remove_sell_order(sell_order)
     sell_orders.delete(sell_order)
-    case sell_order.type
-    when 'market'
+    case sell_order.order_type
+    when :market
       sell_market_orders.delete(sell_order)
-    when 'limit'
+    when :limit
       sell_limit_orders.delete(sell_order)
     end
   end
