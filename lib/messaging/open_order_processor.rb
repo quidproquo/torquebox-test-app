@@ -1,4 +1,4 @@
-module NewOrderProcessor
+module OpenOrderProcessor
 
   def process_new_order(side, price, quantity)
     order = Order.new

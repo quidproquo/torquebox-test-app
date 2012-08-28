@@ -1,10 +1,10 @@
-require 'lib/messaging/new_order_processor'
+require 'lib/messaging/open_order_processor'
 require 'lib/messaging/sent_order_processor'
 require 'lib/messaging/cancelled_order_processor'
 
 class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
 
-  include NewOrderProcessor
+  include OpenOrderProcessor
   include SentOrderProcessor
   include CancelledOrderProcessor
 
