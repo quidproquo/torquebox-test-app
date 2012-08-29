@@ -145,6 +145,17 @@ describe Order do
       its(:pending_quantity) { should == quantity }
     end
 
+    describe :status do
+
+      context 'when status is set from draft to sent' do
+        subject { build(:order) }
+        before { subject.status = Order.statuses.sent }
+        its(:status) { should == Order.statuses.sent }
+        its(:date_sent) { should_not be_nil }
+      end
+
+    end
+
   end
 
   describe :object_methods do
