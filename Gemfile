@@ -54,6 +54,10 @@ gem 'jquery-rails'
 gem 'devise'
 gem 'simple_enum'
 
+group :test do
+  gem 'shoulda'
+end
+
 group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
