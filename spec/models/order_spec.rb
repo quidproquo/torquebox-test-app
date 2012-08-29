@@ -147,10 +147,24 @@ describe Order do
 
     describe :status do
 
-      context 'when status is set from draft to sent' do
+      context 'when status is set from :draft to :sent' do
+        subject { build(:order) }
+        before { subject.status = Order.statuses.sent(true) }
+        its(:status) { should == Order.statuses.sent(true) }
+        its(:date_sent) { should_not be_nil }
+      end
+
+      context 'when status is set from :draft to S' do
         subject { build(:order) }
         before { subject.status = Order.statuses.sent }
-        its(:status) { should == Order.statuses.sent }
+        its(:status) { should == Order.statuses.sent(true) }
+        its(:date_sent) { should_not be_nil }
+      end
+
+      context 'when sent!' do
+        subject { build(:order) }
+        before { subject.sent! }
+        its(:status) { should == Order.statuses.sent(true) }
         its(:date_sent) { should_not be_nil }
       end
 

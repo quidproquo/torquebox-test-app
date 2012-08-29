@@ -24,6 +24,20 @@ class Order < ActiveRecord::Base
 
   # Properties:
 
+  alias_method :enum_status=, :status=
+  alias_method :enum_status_sent!, :sent!
+
+  def status=(status)
+    if status == Order.statuses.sent || status == Order.statuses.sent(true)
+      self.date_sent = Time.now
+    end
+    self.enum_status = status
+  end
+
+  def sent!
+    self.status = Order.statuses.sent
+  end
+
   def quantity=(value)
     self.original_quantity = self.pending_quantity = value
   end

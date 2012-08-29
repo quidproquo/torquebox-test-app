@@ -11,8 +11,8 @@ FactoryGirl.define do
     pending_quantity { 100 }
 
     # Associations:
-    product { create(:product) }
-    account { create(:account) }
+    association :product
+    association :account
 
     # Sub-factories:
     factory :buy_order do
