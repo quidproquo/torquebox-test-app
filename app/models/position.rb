@@ -16,4 +16,10 @@ class Position < ActiveRecord::Base
     self.quantity += amount
   end
 
+  def debit(amount)
+    raise ArgumentError.new("amount should be >= 0, but was: #{amount} for position: #{self}") if amount < 0
+    raise ArgumentError.new("amount should be <= #{self.quantity}, but was: #{amount} for position: #{self}") if amount > self.quantity
+    self.quantity -= amount
+  end
+
 end

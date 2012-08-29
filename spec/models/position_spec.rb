@@ -59,7 +59,7 @@ describe Position do
         context 'when credit qty is equal to 0' do
           let(:credit_amount) { 0 }
           before { get_result }
-          its(:quantity) { should == initial_quantity + credit_amount }
+          its(:quantity) { should == initial_quantity }
         end
 
         context 'when credit qty is less than 0' do
@@ -70,10 +70,58 @@ describe Position do
           end
         end
 
+      end # no init qty
+
+      context 'when there is an initial quantity' do
+        let(:initial_quantity) { 1000 }
+        let(:credit_amount) { 100 }
+        before { get_result }
+        its(:quantity) { should == initial_quantity + credit_amount }
       end
 
-    end
+    end # credit
 
-  end
+    describe :debit do
+      let(:initial_quantity) { nil }
+      let(:debit_amount) { nil }
+      let(:get_result) { subject.debit(debit_amount) }
+      subject { build(:position, quantity: initial_quantity) }
+
+      context 'when there an initial quantity' do
+        let(:initial_quantity) { 1000 }
+
+        context 'when debit amount is greater than 0' do
+          let(:debit_amount) { 100 }
+          before { get_result }
+          its(:quantity) { should == initial_quantity - debit_amount }
+        end
+
+        context 'when debit amount is equal to 0' do
+          let(:debit_amount) { 0 }
+          before { get_result }
+          its(:quantity) { should == initial_quantity }
+        end
+
+        context 'when debit amount is less than 0' do
+          let(:debit_amount) { -100 }
+          it 'should raise an error' do
+            lambda{ get_result }.should raise_error(ArgumentError)
+            subject.quantity.should == initial_quantity
+          end
+        end
+
+        context 'when debit amount is less than initial quantity' do
+          let(:debit_amount) { initial_quantity + 1 }
+          it 'should raise an error' do
+            lambda{ get_result }.should raise_error(ArgumentError)
+            subject.quantity.should == initial_quantity
+          end
+        end
+
+      end # an init qty
+
+    end # credit
+
+  end # methods
 
 end
