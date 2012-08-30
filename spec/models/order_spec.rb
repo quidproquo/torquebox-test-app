@@ -22,99 +22,49 @@ describe Order do
 
   end # initialize
 
+  describe :associations do
+    it { should belong_to(:product) }
+    it { should belong_to(:account) }
+  end
+
   describe :validation do
 
-    context :fields do
+    describe :fields do
 
-      context :status do
+      describe :status do
+        it { should validate_presence_of(:status) }
+      end
 
-        context :nil do
-          subject { build(:order, status: nil) }
-          it { should_not be_valid }
-        end
+      describe :order_type do
+        it { should validate_presence_of(:order_type) }
+      end
 
-        context :blank do
-          subject { build(:order, status: '') }
-          it { should_not be_valid }
-        end
+      describe :side do
+        it { should validate_presence_of(:side) }
+      end
 
-      end # status
+      describe :price do
+        it { should validate_presence_of(:price) }
+      end
 
-      context :order_type do
+      describe :original_quantity do
+        it { should validate_presence_of(:original_quantity) }
+      end
 
-        context :nil do
-          subject { build(:order, order_type: nil) }
-          it { should_not be_valid }
-        end
-
-        context :blank do
-          subject { build(:order, order_type: '') }
-          it { should_not be_valid }
-        end
-
-      end # order_type
-
-      context :side do
-
-        context :nil do
-          subject { build(:order, side: nil) }
-          it { should_not be_valid }
-        end
-
-        context :blank do
-          subject { build(:order, side: '') }
-          it { should_not be_valid }
-        end
-
-      end # side
-
-      context :price do
-
-        context :nil do
-          subject { build(:order, price: nil) }
-          it { should_not be_valid }
-        end
-
-      end # price
-
-      context :original_quantity do
-
-        context :nil do
-          subject { build(:order, original_quantity: nil) }
-          it { should_not be_valid }
-        end
-
-      end # original_quantity
-
-      context :pending_quantity do
-
-        context :nil do
-          subject { build(:order, pending_quantity: nil) }
-          it { should_not be_valid }
-        end
-
-      end # pending_quantity
+      describe :pending_quantity do
+        it { should validate_presence_of(:pending_quantity) }
+      end
 
     end # fields
 
-    context :associations do
+    describe :associations do
 
-      context :product do
-
-        context :nil do
-          subject { build(:order, product: nil) }
-          it { should_not be_valid }
-        end
-
+      describe :product do
+        it { should validate_presence_of(:product) }
       end
 
-      context :account do
-
-        context :nil do
-          subject { build(:order, account: nil) }
-          it { should_not be_valid }
-        end
-
+      describe :account do
+        it { should validate_presence_of(:account) }
       end
 
     end # associations
@@ -125,7 +75,7 @@ describe Order do
 
     describe :save do
       it 'should save and get from db' do
-        order = create(:buy_market_order)
+        order = build(:buy_market_order)
         order.save!
         Order.find(order.id).should == order
       end
@@ -184,8 +134,8 @@ describe Order do
 
         context 'buy market orders' do
           let(:other_date_sent) { nil }
-          let(:other) { create(:sent_buy_market_order, date_sent: other_date_sent) }
-          subject { create(:sent_buy_market_order) }
+          let(:other) { build(:sent_buy_market_order, date_sent: other_date_sent) }
+          subject { build(:sent_buy_market_order) }
 
           context 'when other order is sent before subject order' do
             let(:other_date_sent) { subject.date_sent - 1 }
@@ -215,8 +165,8 @@ describe Order do
 
         context 'sell market orders' do
           let(:other_date_sent) { nil }
-          let(:other) { create(:sent_sell_market_order, date_sent: other_date_sent) }
-          subject { create(:sent_sell_market_order) }
+          let(:other) { build(:sent_sell_market_order, date_sent: other_date_sent) }
+          subject { build(:sent_sell_market_order) }
 
           context 'when other order is sent before subject order' do
             let(:other_date_sent) { subject.date_sent - 1 }
@@ -251,8 +201,8 @@ describe Order do
         context 'buy limit orders' do
           let(:other_date_sent) { subject.date_sent }
           let(:other_price) { nil }
-          let(:other) { create(:sent_buy_limit_order, price: other_price, date_sent: other_date_sent) }
-          subject { create(:sent_buy_limit_order) }
+          let(:other) { build(:sent_buy_limit_order, price: other_price, date_sent: other_date_sent) }
+          subject { build(:sent_buy_limit_order) }
 
           context 'when other order price is less than subject order price' do
             let(:other_price) { subject.price * 0.99 }
@@ -282,7 +232,7 @@ describe Order do
             end
 
             context 'when other order is a sell limit order with same price' do
-              let(:other) { create(:sent_sell_limit_order, price: other_price, date_sent: other_date_sent) }
+              let(:other) { build(:sent_sell_limit_order, price: other_price, date_sent: other_date_sent) }
 
               context 'when other orders date sent is before' do
                 let(:other_date_sent) { subject.date_sent - 1 }
@@ -325,10 +275,10 @@ describe Order do
 
             context 'with orders not in sorted order' do
               let(:orders) { [
-                create(:sent_buy_limit_order, price: 0.1, date_sent: date_sent),
-                create(:sent_buy_limit_order, price: 0.2, date_sent: date_sent),
-                create(:sent_buy_limit_order, price: 0.2, date_sent: date_sent - 1),
-                create(:sent_buy_limit_order, price: 0.15, date_sent: date_sent)
+                build(:sent_buy_limit_order, price: 0.1, date_sent: date_sent),
+                build(:sent_buy_limit_order, price: 0.2, date_sent: date_sent),
+                build(:sent_buy_limit_order, price: 0.2, date_sent: date_sent - 1),
+                build(:sent_buy_limit_order, price: 0.15, date_sent: date_sent)
               ] }
               it { should == [orders[2], orders[1], orders[3], orders[0]] }
             end
@@ -339,8 +289,8 @@ describe Order do
         context 'sell limit orders' do
           let(:other_date_sent) { subject.date_sent }
           let(:other_price) { nil }
-          let(:other) { create(:sent_sell_limit_order, price: other_price, date_sent: other_date_sent) }
-          subject { create(:sent_sell_limit_order) }
+          let(:other) { build(:sent_sell_limit_order, price: other_price, date_sent: other_date_sent) }
+          subject { build(:sent_sell_limit_order) }
 
           context 'when other order price is less than subject order price' do
             let(:other_price) { subject.price * 0.99 }
@@ -370,7 +320,7 @@ describe Order do
             end
 
             context 'when other order is a sell limit order with same price' do
-              let(:other) { create(:sent_buy_limit_order, price: other_price, date_sent: other_date_sent) }
+              let(:other) { build(:sent_buy_limit_order, price: other_price, date_sent: other_date_sent) }
 
               context 'when other orders date sent is before' do
                 let(:other_date_sent) { subject.date_sent - 1 }
@@ -412,10 +362,10 @@ describe Order do
 
             context 'with orders not in sorted order' do
               let(:orders) { [
-                create(:sent_sell_limit_order, price: 0.1, date_sent: date_sent),
-                create(:sent_sell_limit_order, price: 0.2, date_sent: date_sent),
-                create(:sent_sell_limit_order, price: 0.2, date_sent: date_sent - 1),
-                create(:sent_sell_limit_order, price: 0.15, date_sent: date_sent)
+                build(:sent_sell_limit_order, price: 0.1, date_sent: date_sent),
+                build(:sent_sell_limit_order, price: 0.2, date_sent: date_sent),
+                build(:sent_sell_limit_order, price: 0.2, date_sent: date_sent - 1),
+                build(:sent_sell_limit_order, price: 0.15, date_sent: date_sent)
               ] }
               it { should == [orders[0], orders[3], orders[2], orders[1]] }
             end

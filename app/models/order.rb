@@ -56,7 +56,7 @@ class Order < ActiveRecord::Base
       if (comparison = price_compare(other)) == 0
         return 0 unless self.side == other.side
         if (comparison = date_compare(other)) == 0
-          self.id <=> other.id
+          id_compare(other)
         else
           comparison
         end
@@ -87,6 +87,14 @@ class Order < ActiveRecord::Base
     raise ArgumentError, 'price is null' unless self.price
     raise ArgumentError, 'price is null' unless other.price
     (self.price <=> other.price) * (self.buy? ? -1 : 1)
+  end
+
+  def id_compare(other)
+    if self.id && other.id
+      self.id <=> other.id
+    else
+      self.object_id <=> other.object_id
+    end
   end
 
 end
