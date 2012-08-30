@@ -3,7 +3,7 @@ FactoryGirl.define do
 
   factory :order do
     # Fields:
-    status { :draft }
+    status { Order.statuses.draft }
     side { :buy }
     order_type { :market }
     price { Random.rand(0.1..1.0) }
@@ -22,11 +22,15 @@ FactoryGirl.define do
         order_type { :market }
 
         factory :sent_buy_market_order do
-          status { :sent }
+          status { Order.statuses.sent }
           date_sent { Time.now }
 
-          factory :pending_buy_market_order do
-            status { :pending }
+          factory :open_buy_market_order do
+            status { Order.statuses.open }
+
+            factory :pending_buy_market_order do
+              status { Order.statuses.pending }
+            end
           end
         end
       end
@@ -35,11 +39,15 @@ FactoryGirl.define do
         order_type { :limit }
 
         factory :sent_buy_limit_order do
-          status { :sent }
+          status { Order.statuses.sent }
           date_sent { Time.now }
 
-          factory :pending_buy_limit_order do
-            status { :pending }
+          factory :open_buy_limit_order do
+            status { Order.statuses.open }
+
+            factory :pending_buy_limit_order do
+              status { Order.statuses.pending }
+            end
           end
         end
       end
@@ -53,11 +61,15 @@ FactoryGirl.define do
         order_type { :market }
 
         factory :sent_sell_market_order do
-          status { :sent }
+          status { Order.statuses.sent }
           date_sent { Time.now }
 
-          factory :pending_sell_market_order do
-            status { :pending }
+          factory :open_sell_market_order do
+            status { Order.statuses.open }
+
+            factory :pending_sell_market_order do
+              status { Order.statuses.pending }
+            end
           end
         end
       end
@@ -66,11 +78,15 @@ FactoryGirl.define do
         order_type { :limit }
 
         factory :sent_sell_limit_order do
-          status { :sent }
+          status { Order.statuses.sent }
           date_sent { Time.now }
 
-          factory :pending_sell_limit_order do
-            status { :pending }
+          factory :open_sell_limit_order do
+            status { Order.statuses.open }
+
+            factory :pending_sell_limit_order do
+              status { Order.statuses.pending }
+            end
           end
         end
       end
