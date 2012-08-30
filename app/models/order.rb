@@ -29,13 +29,15 @@ class Order < ActiveRecord::Base
 
   def status=(status)
     if status == Order.statuses.sent || status == Order.statuses.sent(true)
-      self.date_sent = Time.now
+      self.sent!
+    else
+      self.enum_status = status
     end
-    self.enum_status = status
   end
 
   def sent!
-    self.status = Order.statuses.sent
+    self.enum_status_sent!
+    self.date_sent = Time.now
   end
 
   def quantity=(value)

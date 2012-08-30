@@ -4,8 +4,8 @@ require 'lib/messaging/cancelled_order_processor'
 
 class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
 
-  include OpenOrderProcessor
   include SentOrderProcessor
+  include OpenOrderProcessor
   include CancelledOrderProcessor
 
   def on_message(body)
@@ -15,19 +15,19 @@ class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
     product_id = body[:product_id]
     order_ids = body[:order_ids]
 
-    if type == 'new_orders'
+    if type == 'sent_orders'
       side = body[:side]
       price = body[:price]
       quantity = body[:quantity]
-      order = process_new_order(side, price, quantity)
+      order = process_sent_order(side, price, quantity)
       orders = [order]
       order_ids = orders.collect(&:id)
       type = 'sent_orders'
     end
 
     case type
-    when 'sent_orders'
-      process_sent_order_ids(product_id, order_ids)
+    when 'open_orders'
+      process_open_order_ids(product_id, order_ids)
     when 'cancelled_orders'
       process_cancelled_order_ids(order_ids)
     end

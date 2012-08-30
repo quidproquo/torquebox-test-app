@@ -19,7 +19,7 @@ describe ProdOrdMessageProcessor do
   end #initialize
 
   describe :modules do
-    it { should respond_to(:process_sent_order_ids) }
+    it { should respond_to(:process_open_order_ids) }
     it { should respond_to(:process_cancelled_order_ids) }
   end
 
@@ -33,9 +33,9 @@ describe ProdOrdMessageProcessor do
       let(:on_message_result) { subject.on_message(message) }
 
       context :sent_orders do
-        let(:message_type) { 'sent_orders' }
+        let(:message_type) { 'open_orders' }
         before do
-          subject.should_receive(:process_sent_order_ids).with(product_id, order_ids)
+          subject.should_receive(:process_open_order_ids).with(product_id, order_ids)
         end
 
         context :buy_order_message do
