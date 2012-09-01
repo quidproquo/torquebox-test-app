@@ -35,6 +35,34 @@ describe Account do
 
     end # get_position
 
+    describe :get_cash_position do
+      let(:account) { create(:account) }
+
+      context 'when cash product exists' do
+        let(:cash_product) { create(:cash_product) }
+        subject { account.get_cash_position }
+        before do
+          cash_product
+        end
+
+        context 'when existing cash position' do
+          let(:cash_position) { create(:position, account: account, product: cash_product) }
+          before do
+            cash_position
+          end
+          it { should == cash_position }
+          its('product.name') { should == 'CASH' }
+        end
+
+        context 'when position doesnt yet exist' do
+          it { should_not be_nil }
+          its('product.name') { should == 'CASH' }
+        end
+
+      end # existing cash product
+
+    end # get_cash_position
+
   end # methods
 
 end

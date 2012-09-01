@@ -7,4 +7,8 @@ class Account < ActiveRecord::Base
     Position.find_or_create_by_account_id_and_product_id(self.id, product.id)
   end
 
+  def get_cash_position
+    get_position(Product.cash_product)
+  end
+
 end

@@ -16,7 +16,7 @@ environment_id="jruby-1.6.7@jrailsapp"
 # }
 
 # Uncomment following line if you want options to be set only for given project.
-PROJECT_JRUBY_OPTS=( --1.9 -J-server )
+PROJECT_JRUBY_OPTS=( --1.9 )
 # The variable PROJECT_JRUBY_OPTS requires the following to be run in shell:
 #    chmod +x ${rvm_path}/hooks/after_use_jruby_opts
 
