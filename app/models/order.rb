@@ -1,5 +1,6 @@
 class Order < ActiveRecord::Base
-  #attr_accessible :account_id, :date_sent, :message, :original_quantity, :pending_quantity, :price, :product_id, :side, :status, :type
+  attr_accessible :account_id, :date_sent, :message, :order_type, :original_quantity, :pending_quantity,
+    :price, :product_id, :quantity, :side, :status
 
   # Fields:
   as_enum :status, { draft: 'D', open: 'O', sent: 'S', pending: 'P', filled: 'F' }

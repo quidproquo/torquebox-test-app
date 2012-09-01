@@ -18,6 +18,12 @@ ActiveRecord::Schema.define(:version => 20120828235303) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "dimensions", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "orders", :force => true do |t|
     t.float    "price"
     t.integer  "original_quantity"

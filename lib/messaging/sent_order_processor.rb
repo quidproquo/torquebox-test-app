@@ -1,17 +1,12 @@
 module SentOrderProcessor
 
-  def process_sent_order(side, price, quantity)
-    order = Order.new
-    order.status = 'sent'
-    order.type = 'limit'
-    order.side = side
-    order.price = price
-    order.quantity = quantity
-    order.product = Product.find_or_create_by_id(1)
-    order.account = Account.find_or_create_by_id(1)
-    order.date_sent = Time.now
+  def process_sent_orders(orders)
+    orders.each { |order| process_sent_order(order) }
+  end
+
+  def process_sent_order(order)
+    order.sent!
     order.save!
-    order
   end
 
 end

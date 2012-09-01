@@ -1,18 +1,18 @@
 require 'lib/messaging/sent_order_processor'
 
-class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
+class AccPosMessageProcessor < TorqueBox::Messaging::MessageProcessor
 
-  include OpenOrderProcessor
+  include SentOrderProcessor
 
   def on_message(body)
     puts "Processing message: #{body}"
 
-    body = Hashie::Mash.new(body)
-    orders = []
-
-    case body.type
-    when 'sent_orders'
-      orders = process_sent_order(product_id, order_ids)
+    case body[:type]
+    when Order.statuses.sent(true).to_s
+      orders = body[:orders].collect { |order|
+        Order.new(order)
+      }
+      process_sent_orders(orders)
     end
 
     puts "Processing message: #{body}!"

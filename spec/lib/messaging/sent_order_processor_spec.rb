@@ -22,30 +22,31 @@ describe SentOrderProcessor do
 
   describe :methods do
 
-    describe :process_sent_order_ids do
-      let(:account) { create(:rich_account) }
+    describe :process_sent_orders do
+      let(:account) { create(:account) }
       let(:product) { create(:product) }
+      let(:position) { account.get_position(:product) }
       let(:orders) { [] }
-      let(:order_ids) { orders.collect(&:id) }
-      let(:process_result) { subject.process_sent_order_ids(product.id, order_ids) }
+      let(:process_result) { subject.process_sent_orders(orders) }
 
       before do
-        pending_orders
-        sent_orders
         process_result
       end
 
-      context 'single open buy limit order' do
+      context 'when single buy limit order' do
         let(:order_price) { 0.5 }
         let(:order_quantity) { 100 }
-        let(:order) { create(:sent_buy_limit_order, price: order_price, quantity: order_quantity, account: account, product: product) }
+        let(:order) { build(:buy_limit_order, price: order_price, quantity: order_quantity, account: account, product: product) }
         let(:orders) { [order] }
+        it 'then orders should all be sent' do
+          orders.each { |order|
+            order.status.should == Order.statuses.sent(true)
+          }
+        end
 
+      end # single buy limit order
 
-
-      end # single open buy limit order
-
-    end # process_sent_order_ids
+    end # process_sent_orders
 
   end # methods
 
