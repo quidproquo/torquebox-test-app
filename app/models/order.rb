@@ -49,6 +49,9 @@ class Order < ActiveRecord::Base
     self.original_quantity
   end
 
+  def value
+    self.price * self.quantity
+  end
 
   # Object methods:
 

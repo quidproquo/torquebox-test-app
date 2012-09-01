@@ -9,6 +9,9 @@ FactoryGirl.define do
     factory :rich_position do
       quantity { 1000000 }
 
+      factory :rich_cash_position do
+        product { Product.cash_product }
+      end
     end
 
   end

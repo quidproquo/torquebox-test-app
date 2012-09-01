@@ -95,6 +95,26 @@ describe Order do
       its(:pending_quantity) { should == quantity }
     end
 
+    describe :value do
+      let(:price) { raise ArgumentError }
+      let(:quantity) { raise ArgumentError }
+      let(:expected_value) { price * quantity }
+      subject { build(:order, price: price, quantity: quantity) }
+
+      context 'when price and quantity are not 0' do
+        let(:price) { 0.5 }
+        let(:quantity) { 1000 }
+        its(:value) { should == expected_value }
+      end
+
+      context 'when price is 0 and quantity is not 0' do
+        let(:price) { 0 }
+        let(:quantity) { 1000 }
+        its(:value) { should == expected_value }
+      end
+
+    end
+
     describe :status do
 
       context 'when status is set from :draft to :sent' do
