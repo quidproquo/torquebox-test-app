@@ -240,7 +240,7 @@ describe SentOrderProcessor do
                 it 'should not lockup amount in cash position' do
                   cash_position.locked_quantity.should == 0
                 end
-              end # product has price
+              end # product has no price
 
             end # single buy market order
 
@@ -305,7 +305,7 @@ describe SentOrderProcessor do
                 it 'should lockup amount in position' do
                   position.locked_quantity.should == 0
                 end
-              end # product has price
+              end # product has no price
 
             end # single sell market order
 

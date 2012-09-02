@@ -1,5 +1,7 @@
 module SentOrderProcessor
 
+  include OrderMessager
+
   def process_sent_orders(orders)
     orders.each { |order| process_sent_order(order) }
   end
@@ -60,10 +62,6 @@ module SentOrderProcessor
     else
       order.reject!("Rejected due to insufficient funds")
     end
-  end
-
-  def send_open_order(order)
-
   end
 
 end
