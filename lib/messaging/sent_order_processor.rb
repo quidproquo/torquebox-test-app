@@ -44,14 +44,22 @@ module SentOrderProcessor
 
   def process_sent_buy_order(order)
     cash_position = order.account.get_cash_position
-    cash_position.lockup(order.value)
-    cash_position.save!
+    if cash_position.can_lockup?(order.value)
+      cash_position.lockup(order.value)
+      cash_position.save!
+    else
+      order.reject!("Rejected due to insufficient shares")
+    end
   end
 
   def process_sent_sell_order(order)
     position = order.account.get_position(order.product)
-    position.lockup(order.quantity)
-    position.save!
+    if position.can_lockup?(order.quantity)
+      position.lockup(order.quantity)
+      position.save!
+    else
+      order.reject!("Rejected due to insufficient funds")
+    end
   end
 
   def send_open_order(order)
