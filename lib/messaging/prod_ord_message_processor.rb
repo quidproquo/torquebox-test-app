@@ -11,6 +11,8 @@ class ProdOrdMessageProcessor < TorqueBox::Messaging::MessageProcessor
   def on_message(body)
     puts "Processing message: #{body}"
 
+    return true
+
     type = body[:type]
     product_id = body[:product_id]
     order_ids = body[:order_ids]
