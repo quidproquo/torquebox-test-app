@@ -49,7 +49,9 @@ module SentOrderProcessor
   end
 
   def process_sent_sell_order(order)
-
+    position = order.account.get_position(order.product)
+    position.lockup(order.quantity)
+    position.save!
   end
 
   def send_open_order(order)

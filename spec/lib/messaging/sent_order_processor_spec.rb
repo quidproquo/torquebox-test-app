@@ -87,7 +87,7 @@ describe SentOrderProcessor do
                     order.date_sent.should_not be_nil
                   }
                 end
-                it 'should lockup amount in position' do
+                it 'should lockup amount in cash position' do
                   cash_position.locked_quantity.should == order.value
                 end
               end # product has price
@@ -101,7 +101,7 @@ describe SentOrderProcessor do
                     order.date_sent.should_not be_nil
                   }
                 end
-                it 'should lockup amount in position' do
+                it 'should not lockup amount in cash position' do
                   cash_position.locked_quantity.should == 0
                 end
               end # product has price
@@ -111,6 +111,71 @@ describe SentOrderProcessor do
           end # buy market orders
 
         end # buy orders
+
+        context 'with sell orders' do
+
+          context 'with sell limit orders' do
+
+            context 'when single sell limit order' do
+              let(:order_price) { 0.5 }
+              let(:order_quantity) { 100 }
+              let(:order) { build(:sell_limit_order, price: order_price, quantity: order_quantity, account: account, product: product) }
+              let(:orders) { [order] }
+              let(:open_orders) { orders }
+              it 'then orders should all be open' do
+                orders.each { |order|
+                  order.should be_open
+                  order.date_sent.should_not be_nil
+                }
+              end
+              it 'should lockup amount in position' do
+                position.locked_quantity.should == order.quantity
+              end
+            end # single sell limit order
+
+          end # sell limit orders
+
+          context 'with sell market orders' do
+
+            context 'when single sell market order' do
+              let(:order_price) { nil }
+              let(:order_quantity) { 100 }
+              let(:order) { build(:sell_market_order, price: order_price, quantity: order_quantity, account: account, product: product) }
+              let(:orders) { [order] }
+
+              context 'when product has a price' do
+                let(:product) { create(:product, price: 0.5) }
+                let(:open_orders) { orders }
+                it 'then orders should all be open' do
+                  orders.each { |order|
+                    order.should be_open
+                    order.date_sent.should_not be_nil
+                  }
+                end
+                it 'should lockup amount in position' do
+                  position.locked_quantity.should == order.quantity
+                end
+              end # product has price
+
+              context 'when product has no price' do
+                let(:product) { create(:product, price: nil) }
+                let(:open_orders) { [] }
+                it 'then orders should all be rejected' do
+                  orders.each { |order|
+                    order.should be_rejected
+                    order.date_sent.should_not be_nil
+                  }
+                end
+                it 'should lockup amount in position' do
+                  position.locked_quantity.should == 0
+                end
+              end # product has price
+
+            end # single sell market order
+
+          end # sell market orders
+
+        end # sell orders
 
       end # rich positions
 
