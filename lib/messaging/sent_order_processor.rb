@@ -6,19 +6,54 @@ module SentOrderProcessor
 
   def process_sent_order(order)
     order.sent!
-    case order.side
-    when Order.sides.buy(true)
-      process_sent_buy_order(order)
-    when Order.sides.sell(true)
+
+    if order.market?
+      process_sent_market_order(order)
+    elsif order.limit?
+      process_sent_limit_order(order)
     end
-    order.open!
-    order.save!
+
+    unless order.rejected?
+      order.open!
+      order.save!
+      send_open_order(order)
+    else
+      order.save!
+    end
+  end
+
+  def process_sent_market_order(order)
+    if order.price.present?
+      process_sent_order_by_side(order)
+    else
+      order.reject!("Rejected because market price for this product doesn't exist yet")
+    end
+  end
+
+  def process_sent_limit_order(order)
+    process_sent_order_by_side(order)
+  end
+
+  def process_sent_order_by_side(order)
+    if order.buy?
+      process_sent_buy_order(order)
+    elsif order.sell?
+      process_sent_sell_order(order)
+    end
   end
 
   def process_sent_buy_order(order)
     cash_position = order.account.get_cash_position
     cash_position.lockup(order.value)
     cash_position.save!
+  end
+
+  def process_sent_sell_order(order)
+
+  end
+
+  def send_open_order(order)
+
   end
 
 end

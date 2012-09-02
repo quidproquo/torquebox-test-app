@@ -44,7 +44,7 @@ describe Order do
       end
 
       describe :price do
-        it { should validate_presence_of(:price) }
+        it { should_not validate_presence_of(:price) }
       end
 
       describe :original_quantity do
@@ -74,16 +74,52 @@ describe Order do
   describe :crud do
 
     describe :save do
-      it 'should save and get from db' do
-        order = build(:buy_market_order)
-        order.save!
-        Order.find(order.id).should == order
-      end
-    end
+
+      context 'market order' do
+
+        context 'buy market order' do
+
+          it 'should save and get from db' do
+            order = build(:buy_market_order)
+            order.save!
+            Order.find(order.id).should == order
+          end
+        end
+
+      end # market order
+
+    end # save
 
   end # crud
 
   describe :properties do
+
+    describe :price do
+      subject { raise ArgumentError }
+
+      context 'when order is limit' do
+        let(:price) { 0.5 }
+        subject { build(:limit_order, price: price) }
+        its(:price) { should == price }
+      end
+
+      context 'when order is market' do
+        let(:product) { create(:product, price: product_price) }
+        let(:product_price) { raise ArgumentError }
+        subject { build(:market_order, product: product) }
+
+        context 'when product has price' do
+          let(:product_price) { 0.5 }
+          its(:price) { should == product_price }
+        end
+
+        context 'when product has no price' do
+          let(:product_price) { nil }
+          its(:price) { should == product_price }
+        end
+      end
+
+    end
 
     describe :quantity do
       let(:quantity) { 1000 }
@@ -138,6 +174,17 @@ describe Order do
         its(:date_sent) { should_not be_nil }
       end
 
+    end # status
+
+  end # properties
+
+  describe :methods do
+
+    describe :reject! do
+      let(:reject_message) { 'Rejected message' }
+      before { subject.reject!(reject_message) }
+      it { should be_rejected }
+      its(:message) { should == reject_message }
     end
 
   end

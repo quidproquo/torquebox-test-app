@@ -15,15 +15,26 @@ FactoryGirl.define do
     association :account
 
     # Sub-factories:
+    factory :limit_order do
+      order_type { Order.order_types.limit }
+    end
+
+    factory :market_order do
+      order_type { Order.order_types.market }
+      price { nil }
+    end
+
     factory :buy_order do
       side { :buy }
 
       factory :buy_market_order do
         order_type { :market }
+        price { nil }
 
         factory :sent_buy_market_order do
           status { Order.statuses.sent }
           date_sent { Time.now }
+          price { Random.rand(0.1..1.0) }
 
           factory :open_buy_market_order do
             status { Order.statuses.open }
@@ -41,6 +52,7 @@ FactoryGirl.define do
         factory :sent_buy_limit_order do
           status { Order.statuses.sent }
           date_sent { Time.now }
+          price { Random.rand(0.1..1.0) }
 
           factory :open_buy_limit_order do
             status { Order.statuses.open }
@@ -59,6 +71,7 @@ FactoryGirl.define do
 
       factory :sell_market_order do
         order_type { :market }
+        price { nil }
 
         factory :sent_sell_market_order do
           status { Order.statuses.sent }

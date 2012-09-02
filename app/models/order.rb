@@ -3,7 +3,7 @@ class Order < ActiveRecord::Base
     :price, :product_id, :quantity, :side, :status
 
   # Fields:
-  as_enum :status, { draft: 'D', open: 'O', sent: 'S', pending: 'P', filled: 'F' }
+  as_enum :status, { draft: 'D', sent: 'S', rejected: 'R', open: 'O', pending: 'P', cancelled: 'C', filled: 'F' }
   as_enum :order_type, { market: 'M', limit: 'L' }
   as_enum :side, { buy: 'B', sell: 'S' }
 
@@ -15,7 +15,6 @@ class Order < ActiveRecord::Base
   validates_presence_of :status
   validates_presence_of :order_type
   validates_presence_of :side
-  validates_presence_of :price
   validates_presence_of :original_quantity
   validates_presence_of :pending_quantity
 
@@ -26,7 +25,6 @@ class Order < ActiveRecord::Base
   # Properties:
 
   alias_method :enum_status=, :status=
-  alias_method :enum_status_sent!, :sent!
 
   def status=(status)
     if status == Order.statuses.sent || status == Order.statuses.sent(true)
@@ -36,9 +34,19 @@ class Order < ActiveRecord::Base
     end
   end
 
+  alias_method :enum_status_sent!, :sent!
+
   def sent!
     self.enum_status_sent!
     self.date_sent = Time.now
+  end
+
+  def price
+    if self.market? and not self.attributes['price'].present?
+      self.attributes['price'] = self.product.try(:price)
+    else
+      self.attributes['price']
+    end
   end
 
   def quantity=(value)
@@ -51,6 +59,13 @@ class Order < ActiveRecord::Base
 
   def value
     self.price * self.quantity
+  end
+
+  # Methods:
+
+  def reject!(message)
+    rejected!
+    self.message = message
   end
 
   # Object methods:
