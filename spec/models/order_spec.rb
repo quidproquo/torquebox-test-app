@@ -187,6 +187,15 @@ describe Order do
       its(:message) { should == reject_message }
     end
 
+    describe :to_hash do
+      let(:order) { build(:sent_buy_limit_order) }
+      subject { order.to_hash }
+      it { should == {account_id: order.account_id, product_id: order.product_id,
+        status: order.status, order_type: order.order_type, side: order.side,
+        price: order.price, quantity: order.quantity}
+      }
+    end
+
   end
 
   describe :object_methods do

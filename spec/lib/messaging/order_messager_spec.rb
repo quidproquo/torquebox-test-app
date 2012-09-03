@@ -23,6 +23,37 @@ describe OrderMessager do
 
   describe :methods do
 
+    describe :send_sent_orders do
+      let(:orders) { raise ArgumentError }
+      let(:account_id) { order.account.id }
+      let(:expected_message) { raise ArgumentError }
+      let(:expected_properties) { {'JMSXGroupID' => account_id.to_s, '_HQ_GROUP_ID' => account_id.to_s} }
+      let(:method_result) { subject.send_sent_orders(orders) }
+
+      before do
+       subject.should_receive(:inject).with('/queues/trade/acc_pos').and_return(queue)
+       queue.should_receive(:publish).with(expected_message, properties: expected_properties)
+      end
+
+      context 'buy market order' do
+        let(:order) { create(:buy_market_order) }
+        let(:orders) { [order] }
+        let(:expected_message) {
+          {
+            type: Order.statuses.sent(true).to_s,
+            account_id: order.account_id,
+            orders: orders.collect { |order|
+              order.to_hash
+            }
+          }
+        }
+        it 'should send order' do
+          method_result.should == true
+        end
+      end
+
+    end # send_open_order
+
     describe :send_open_order do
       let(:order) { raise ArgumentError }
       let(:product_id) { order.product.id }

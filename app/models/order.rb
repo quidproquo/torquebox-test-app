@@ -68,6 +68,12 @@ class Order < ActiveRecord::Base
     self.message = message
   end
 
+  def to_hash
+    {account_id: self.account_id, product_id: self.product_id,
+      status: self.status, order_type: self.order_type, side: self.side,
+      price: self.price, quantity: self.quantity}
+  end
+
   # Object methods:
 
   def <=>(other)
