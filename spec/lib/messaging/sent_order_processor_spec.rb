@@ -98,6 +98,7 @@ describe SentOrderProcessor do
                 it 'then orders should all be rejected' do
                   orders.each { |order|
                     order.should be_rejected
+                    order.message.should == Order::REJECTED_PRICE
                     order.date_sent.should_not be_nil
                   }
                 end
@@ -163,6 +164,7 @@ describe SentOrderProcessor do
                 it 'then orders should all be rejected' do
                   orders.each { |order|
                     order.should be_rejected
+                    order.message.should == Order::REJECTED_PRICE
                     order.date_sent.should_not be_nil
                   }
                 end
@@ -196,6 +198,7 @@ describe SentOrderProcessor do
               it 'then orders should all be open' do
                 orders.each { |order|
                   order.should be_rejected
+                  order.message.should == Order::REJECTED_FUNDS
                   order.date_sent.should_not be_nil
                 }
               end
@@ -220,6 +223,7 @@ describe SentOrderProcessor do
                 it 'then orders should all be open' do
                   orders.each { |order|
                     order.should be_rejected
+                    order.message.should == Order::REJECTED_FUNDS
                     order.date_sent.should_not be_nil
                   }
                 end
@@ -234,6 +238,7 @@ describe SentOrderProcessor do
                 it 'then orders should all be rejected' do
                   orders.each { |order|
                     order.should be_rejected
+                    order.message.should == Order::REJECTED_PRICE
                     order.date_sent.should_not be_nil
                   }
                 end
@@ -261,6 +266,7 @@ describe SentOrderProcessor do
               it 'then orders should all be open' do
                 orders.each { |order|
                   order.should be_rejected
+                  order.message.should == Order::REJECTED_SHARES
                   order.date_sent.should_not be_nil
                 }
               end
@@ -285,6 +291,7 @@ describe SentOrderProcessor do
                 it 'then orders should all be open' do
                   orders.each { |order|
                     order.should be_rejected
+                    order.message.should == Order::REJECTED_SHARES
                     order.date_sent.should_not be_nil
                   }
                 end
@@ -299,6 +306,7 @@ describe SentOrderProcessor do
                 it 'then orders should all be rejected' do
                   orders.each { |order|
                     order.should be_rejected
+                    order.message.should == Order::REJECTED_PRICE
                     order.date_sent.should_not be_nil
                   }
                 end

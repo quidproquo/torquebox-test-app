@@ -33,7 +33,7 @@ describe ProdOrdMessageProcessor do
       let(:on_message_result) { subject.on_message(message) }
 
       context :sent_orders do
-        let(:message_type) { 'open_orders' }
+        let(:message_type) { Order.statuses.open(true).to_s }
         before do
           subject.should_receive(:process_open_order_ids).with(product_id, order_ids)
         end
@@ -48,7 +48,7 @@ describe ProdOrdMessageProcessor do
       end #sent_orders
 
       context :cancelled_orders do
-        let(:message_type) { 'cancelled_orders' }
+        let(:message_type) { Order.statuses.cancelled(true).to_s }
         before do
           subject.should_receive(:process_cancelled_order_ids).with(order_ids)
         end

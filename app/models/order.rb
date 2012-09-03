@@ -1,4 +1,10 @@
 class Order < ActiveRecord::Base
+
+  # Constants:
+  REJECTED_SHARES = 'Rejected due to insufficient shares'
+  REJECTED_FUNDS = 'Rejected due to insufficient funds'
+  REJECTED_PRICE = 'Rejected due to undefined market price'
+
   attr_accessible :account_id, :date_sent, :message, :order_type, :original_quantity, :pending_quantity,
     :price, :product_id, :quantity, :side, :status
 

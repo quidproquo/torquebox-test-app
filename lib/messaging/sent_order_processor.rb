@@ -28,7 +28,7 @@ module SentOrderProcessor
     if order.price.present?
       process_sent_order_by_side(order)
     else
-      order.reject!("Rejected because market price for this product doesn't exist yet")
+      order.reject!(Order::REJECTED_PRICE)
     end
   end
 
@@ -50,7 +50,7 @@ module SentOrderProcessor
       cash_position.lockup(order.value)
       cash_position.save!
     else
-      order.reject!("Rejected due to insufficient shares")
+      order.reject!(Order::REJECTED_FUNDS)
     end
   end
 
@@ -60,7 +60,7 @@ module SentOrderProcessor
       position.lockup(order.quantity)
       position.save!
     else
-      order.reject!("Rejected due to insufficient funds")
+      order.reject!(Order::REJECTED_SHARES)
     end
   end
 
