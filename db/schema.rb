@@ -11,7 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120901172517) do
+ActiveRecord::Schema.define(:version => 20120904035704) do
+
+  create_table "account_transactions", :force => true do |t|
+    t.integer  "transactable_id"
+    t.string   "transactable_type"
+    t.integer  "account_id",                       :null => false
+    t.integer  "product_id",                       :null => false
+    t.string   "transaction_type_cd", :limit => 1, :null => false
+    t.float    "quantity",                         :null => false
+    t.float    "cost_basis",                       :null => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
 
   create_table "accounts", :force => true do |t|
     t.datetime "created_at", :null => false
