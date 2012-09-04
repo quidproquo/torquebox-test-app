@@ -11,7 +11,7 @@ module SentOrderProcessor
 
     if order.market?
       process_sent_market_order(order)
-    elsif order.limit?
+    elsif order.limit_order?
       process_sent_limit_order(order)
     end
 

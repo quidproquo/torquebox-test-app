@@ -5,7 +5,7 @@ FactoryGirl.define do
     # Fields:
     status { Order.statuses.draft }
     side { :buy }
-    order_type { :market }
+    order_type { Order.order_types.market }
     price { Random.rand(0.1..1.0) }
     original_quantity { 100 }
     pending_quantity { 100 }
@@ -16,7 +16,7 @@ FactoryGirl.define do
 
     # Sub-factories:
     factory :limit_order do
-      order_type { Order.order_types.limit }
+      order_type { Order.order_types.limit_order }
     end
 
     factory :market_order do
@@ -28,7 +28,7 @@ FactoryGirl.define do
       side { :buy }
 
       factory :buy_market_order do
-        order_type { :market }
+        order_type { Order.order_types.market }
         price { nil }
 
         factory :sent_buy_market_order do
@@ -47,7 +47,7 @@ FactoryGirl.define do
       end
 
       factory :buy_limit_order do
-        order_type { :limit }
+        order_type { Order.order_types.limit_order }
 
         factory :sent_buy_limit_order do
           status { Order.statuses.sent }
@@ -70,7 +70,7 @@ FactoryGirl.define do
       side { :sell }
 
       factory :sell_market_order do
-        order_type { :market }
+        order_type { Order.order_types.market }
         price { nil }
 
         factory :sent_sell_market_order do
@@ -88,7 +88,7 @@ FactoryGirl.define do
       end
 
       factory :sell_limit_order do
-        order_type { :limit }
+        order_type { Order.order_types.limit_order }
 
         factory :sent_sell_limit_order do
           status { Order.statuses.sent }

@@ -27,7 +27,7 @@ module OrderMessager
     message = {
       type: Order.statuses.open(true).to_s,
       product_id: order.product.id,
-      order_id: order.id
+      order_ids: [order.id]
     }
     properties = prod_ord_message_properties_template(order)
     prod_ord_queue.publish(message, properties: properties)

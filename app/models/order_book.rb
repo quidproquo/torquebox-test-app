@@ -77,8 +77,8 @@ class OrderBook
 
   def get_matching_orders(order)
     case order.order_type
-    when :market
-    when :limit
+    when Order.order_types.market(true)
+    when Order.order_types.limit_order(true)
       case order.side
       when :buy
         get_matching_sell_limit_orders(order)
@@ -104,9 +104,9 @@ class OrderBook
   def add_buy_order(buy_order)
     buy_orders << buy_order
     case buy_order.order_type
-    when :market
+    when Order.order_types.market(true)
       buy_market_orders << buy_order
-    when :limit
+    when Order.order_types.limit_order(true)
       buy_limit_orders << buy_order
     end
   end
@@ -114,9 +114,9 @@ class OrderBook
   def add_sell_order(sell_order)
     sell_orders << sell_order
     case sell_order.order_type
-    when :market
+    when Order.order_types.market(true)
       sell_market_orders << sell_order
-    when :limit
+    when Order.order_types.limit_order(true)
       sell_limit_orders << sell_order
     end
   end
@@ -124,9 +124,9 @@ class OrderBook
   def remove_buy_order(buy_order)
     buy_orders.delete(buy_order)
     case buy_order.order_type
-    when :market
+    when Order.order_types.market(true)
       buy_market_orders.delete(buy_order)
-    when :limit
+    when Order.order_types.limit_order(true)
       buy_limit_orders.delete(buy_order)
     end
   end
@@ -134,9 +134,9 @@ class OrderBook
   def remove_sell_order(sell_order)
     sell_orders.delete(sell_order)
     case sell_order.order_type
-    when :market
+    when Order.order_types.market(true)
       sell_market_orders.delete(sell_order)
-    when :limit
+    when Order.order_types.limit_order(true)
       sell_limit_orders.delete(sell_order)
     end
   end

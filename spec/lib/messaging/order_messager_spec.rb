@@ -69,7 +69,8 @@ describe OrderMessager do
       context 'buy market order' do
         let(:order) { create(:open_buy_market_order) }
         let(:expected_message) {
-          {type: Order.statuses.open(true).to_s, product_id: order.product.id, order_id: order.id}
+          {type: Order.statuses.open(true).to_s, product_id: order.product.id,
+           order_ids: [order.id]}
         }
         it 'should send order' do
           method_result.should == true

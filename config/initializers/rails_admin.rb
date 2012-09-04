@@ -79,12 +79,24 @@ RailsAdmin.config do |config|
 
   # All fields marked as 'hidden' won't be shown anywhere in the rails_admin unless you mark them as visible. (visible(true))
 
+  config.model Order do
+    list do
+      field :id
+      field :status
+      field :quantity
+      field :pending_quantity
+      field :date_sent
+      field :created_at
+      field :updated_at
+    end
+  end
+
   # config.model Dimension do
   #   # Found associations:
   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :name, :string 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :name, :string
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end

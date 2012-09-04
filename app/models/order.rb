@@ -10,7 +10,7 @@ class Order < ActiveRecord::Base
 
   # Fields:
   as_enum :status, { draft: 'D', sent: 'S', rejected: 'R', open: 'O', pending: 'P', cancelled: 'C', filled: 'F' }
-  as_enum :order_type, { market: 'M', limit: 'L' }
+  as_enum :order_type, { market: 'M', limit_order: 'L' }
   as_enum :side, { buy: 'B', sell: 'S' }
 
   # Associations:
@@ -85,7 +85,7 @@ class Order < ActiveRecord::Base
   def <=>(other)
     if self.market?
       date_compare(other)
-    elsif self.limit?
+    elsif self.limit_order?
       if (comparison = price_compare(other)) == 0
         return 0 unless self.side == other.side
         if (comparison = date_compare(other)) == 0
