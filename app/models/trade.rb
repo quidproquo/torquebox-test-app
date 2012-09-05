@@ -1,14 +1,20 @@
 class Trade < ActiveRecord::Base
-  
+
   attr_accessible :account, :order, :price, :quantity
 
   # Associations:
-  
   belongs_to :account
-  belongs_to :order
+  belongs_to :product
+  belongs_to :buy_order
+  belongs_to :sell_order
+
+  has_many :transactions, as: :transactable, class_name: 'AccountTransaction'
 
 
   # Class methods:
+  def self.create_trade(order1, order2)
+    nil
+  end
 
   def self.create_trades(order1, order2)
     trades = [
