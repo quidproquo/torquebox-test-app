@@ -3,10 +3,11 @@ class Trade < ActiveRecord::Base
   attr_accessible :account, :order, :price, :quantity
 
   # Associations:
-  belongs_to :account
+  belongs_to :buy_account, class_name: 'Account'
+  belongs_to :sell_account, class_name: 'Account'
   belongs_to :product
-  belongs_to :buy_order
-  belongs_to :sell_order
+  belongs_to :buy_order, class_name: 'Order'
+  belongs_to :sell_order, class_name: 'Order'
 
   has_many :transactions, as: :transactable, class_name: 'AccountTransaction'
 

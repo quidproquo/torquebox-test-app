@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120904035704) do
+ActiveRecord::Schema.define(:version => 20120905021855) do
 
   create_table "account_transactions", :force => true do |t|
     t.integer  "transactable_id"
@@ -81,12 +81,15 @@ ActiveRecord::Schema.define(:version => 20120904035704) do
   add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
 
   create_table "trades", :force => true do |t|
-    t.integer  "account_id"
-    t.integer  "order_id"
     t.float    "price"
     t.float    "quantity"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.integer  "buy_account_id",  :null => false
+    t.integer  "sell_account_id", :null => false
+    t.integer  "product_id",      :null => false
+    t.integer  "buy_order_id",    :null => false
+    t.integer  "sell_order_id",   :null => false
   end
 
   create_table "users", :force => true do |t|

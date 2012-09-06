@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Trade do
 
   describe :associations do
-    it { should belong_to(:account) }
+    it { should belong_to(:buy_account) }
+    it { should belong_to(:sell_account) }
     it { should belong_to(:product) }
     it { should belong_to(:buy_order) }
     it { should belong_to(:sell_order) }
@@ -24,11 +25,11 @@ describe Trade do
       let(:product) { create(:product) }
 
       let(:buy_price) { raise ArgumentError }
-      let(:buy_quantity) { raise ArgumentError }
+      let(:buy_quantity) { 1000 }
       let(:buy_order) { raise ArgumentError }
 
       let(:sell_price) { raise ArgumentError }
-      let(:sell_quantity) { raise ArgumentError }
+      let(:sell_quantity) { 1000 }
       let(:sell_order) { raise ArgumentError }
 
       subject { Trade.create_trade(buy_order, sell_order) }
