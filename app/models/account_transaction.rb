@@ -1,11 +1,11 @@
 class AccountTransaction < ActiveRecord::Base
-  attr_accessible :account_id, :cost_basis, :product_id, :quantity, :transaction_type
+  attr_accessible :account, :cost_basis, :product, :quantity, :transaction_type
 
   # Fields:
   as_enum :transaction_type, {debit: 'D', credit: 'C'}
 
   # Associations:
-  belongs_to :transactable
+  belongs_to :transactable, polymorphic: true
   belongs_to :account
   belongs_to :product
 

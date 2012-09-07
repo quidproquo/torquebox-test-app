@@ -17,16 +17,26 @@ describe Trade do
 
     describe :create_trade do
       shared_examples_for :created_trade do
-        it { should have(4).transactions }
+        let(:transactions) { subject.transactions }
+        let(:transaction_1) { transactions.to_a[0] }
+        let(:buy_account) { buy_order.account }
+        let(:sell_account) { sell_order.account }
         its(:buy_order) { should == buy_order }
         its(:sell_order) { should == sell_order }
+        it { should have(4).transactions }
+        it 'should have valid transactions' do
+          transaction_1.should_not be_nil
+          transaction_1.transaction_type.should == AccountTransaction.transaction_types.debit(true)
+          transaction_1.account.should == buy_account
+        end
       end
 
       let(:product) { create(:product) }
 
+      let(:buy_order_factory) { raise ArgumentError }
       let(:buy_price) { raise ArgumentError }
       let(:buy_quantity) { 1000 }
-      let(:buy_order) { raise ArgumentError }
+      let(:buy_order) { create(buy_order_factory, price: buy_price, quantity: buy_quantity, product: product) }
 
       let(:sell_price) { raise ArgumentError }
       let(:sell_quantity) { 1000 }
@@ -35,7 +45,7 @@ describe Trade do
       subject { Trade.create_trade(buy_order, sell_order) }
 
       context 'buy limit order' do
-        let(:buy_order) { create(:pending_buy_limit_order, price: buy_price, quantity: buy_quantity, product: product) }
+        let(:buy_order_factory) { :pending_buy_limit_order }
 
         context 'sell limit order' do
           let(:sell_order) { create(:pending_sell_limit_order, price: buy_price, quantity: buy_quantity, product: product) }
@@ -44,33 +54,15 @@ describe Trade do
             let(:buy_price) { 0.75 }
             let(:sell_price) { buy_price/3 }
             it_behaves_like :created_trade
+            its(:quantity) { should == 1000 }
           end
 
         end
 
       end
 
-    end
+    end # create trade
 
-    describe :create_trades do
-      let(:product) { create(:product) }
-
-      let(:order1_price) { 0.5 }
-      let(:order1_quantity) { 100 }
-      let(:order1) { create(:pending_buy_limit_order, price: order1_price, quantity: order1_quantity, product: product) }
-
-      let(:order2_price) { 0.5 }
-      let(:order2_quantity) { 100 }
-      let(:order2) { create(:pending_sell_limit_order, price: order2_price, quantity: order2_quantity, product: product) }
-
-      subject { Trade.create_trades(order1, order2) }
-
-      context 'where price and quantities match' do
-        its(:length) { should == 2 }
-      end
-
-    end
-
-  end
+  end # class methods
 
 end
