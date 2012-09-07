@@ -4,13 +4,18 @@ class Trade < ActiveRecord::Base
     :buy_order, :sell_order, :price, :quantity
 
   # Associations:
+  belongs_to :buy_order, class_name: 'Order'
+  belongs_to :sell_order, class_name: 'Order'
   belongs_to :buy_account, class_name: 'Account'
   belongs_to :sell_account, class_name: 'Account'
   belongs_to :product
-  belongs_to :buy_order, class_name: 'Order'
-  belongs_to :sell_order, class_name: 'Order'
 
   has_many :transactions, as: :transactable, class_name: 'AccountTransaction'
+
+  # Properties:
+  def value
+    self.price * self.quantity
+  end
 
   # Methods:
 
@@ -19,8 +24,24 @@ class Trade < ActiveRecord::Base
   before_create :build_transactions
 
   def build_transactions
+    # Debit cash from buy account
     self.transactions.build(transaction_type: AccountTransaction.transaction_types.debit,
       account: buy_account, product: Product.cash_product,
+      cost_basis: 1, quantity: self.value)
+
+    # Credit shares to buy account
+    self.transactions.build(transaction_type: AccountTransaction.transaction_types.credit,
+      account: buy_account, product: self.product,
+      cost_basis: self.price, quantity: self.quantity)
+
+    # Credit cash to buy account
+    self.transactions.build(transaction_type: AccountTransaction.transaction_types.credit,
+      account: sell_account, product: Product.cash_product,
+      cost_basis: 1, quantity: self.value)
+
+    # Debit shares from sell account
+    self.transactions.build(transaction_type: AccountTransaction.transaction_types.debit,
+      account: sell_account, product: self.product,
       cost_basis: self.price, quantity: self.quantity)
   end
 
@@ -41,19 +62,6 @@ class Trade < ActiveRecord::Base
         product: buy_order.product, buy_order: buy_order, sell_order: sell_order,
         price: get_trade_price(order1, order2),
         quantity: get_trade_quantity(order1, order2))
-    end
-
-    def create_trades(order1, order2)
-      trades = [
-        Trade.new(order: order1, price: order1.price, quantity: order1.quantity),
-        Trade.new(order: order2, price: order1.price, quantity: order1.quantity),
-      ]
-      trades.each(&:save!)
-      order1.status = 'filled'
-      order1.save!
-      order2.status = 'filled'
-      order2.save!
-      trades
     end
 
     def get_trade_price(order1, order2)

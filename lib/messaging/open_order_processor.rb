@@ -14,7 +14,7 @@ module OpenOrderProcessor
 
       matching_orders.each { |matching_order|
         break unless order.pending?
-        trades += Trade.create_trades(order, matching_order)
+        trades << Trade.create_trade(order, matching_order)
 
         order_book.add_order(order) if order.pending?
         order_book.remove_order(matching_order) unless matching_order.pending?

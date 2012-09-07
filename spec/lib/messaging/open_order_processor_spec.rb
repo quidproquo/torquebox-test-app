@@ -60,7 +60,7 @@ describe OpenOrderProcessor do
               true
             end
             it { process_result.should == true }
-            it { trades.length.should == 2 }
+            it { trades.length.should == 1 }
           end
 
         end
