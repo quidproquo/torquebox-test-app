@@ -1,16 +1,21 @@
 module OpenOrderProcessor
 
   def process_open_order_ids(product_id, order_ids)
-    puts "product_id: #{product_id}, order_ids: #{order_ids}"
+    puts "process_open_order_ids(#{product_id}, #{order_ids}).start"
 
+    puts "OrderBook.find_by_product_id(#{product_id}).start"
     order_book = OrderBook.find_by_product_id(product_id)
+    puts "OrderBook.find_by_product_id(#{product_id}).end"
 
     sent_orders = Order.find_all_by_id(order_ids)
     trades = []
 
     sent_orders.each { |order|
       order.status = Order.statuses.pending
+      puts "OrderBook.get_matching_orders(#{order.id}).start"
       matching_orders = order_book.get_matching_orders(order)
+      puts "found #{matching_orders.length} matching order(s)"
+      puts "OrderBook.get_matching_orders(#{order.id}).end"
 
       matching_orders.each { |matching_order|
         break unless order.pending?
@@ -23,6 +28,7 @@ module OpenOrderProcessor
       order.save!
     }
 
+    order_book.save!
     true
   end
 

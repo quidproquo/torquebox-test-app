@@ -34,11 +34,13 @@ describe OpenOrderProcessor do
         pending_orders
         orders
         process_result
+        orders.map(&:reload)
+        pending_orders.map(&:reload)
       end
 
       context 'single open buy limit order' do
         let(:order_price) { 0.5 }
-        let(:order_quantity) { 100 }
+        let(:order_quantity) { 1000 }
         let(:order) { create(:open_buy_limit_order, price: order_price, quantity: order_quantity, product: product) }
         let(:orders) { [order] }
 
@@ -63,6 +65,19 @@ describe OpenOrderProcessor do
             it { trades.length.should == 1 }
           end
 
+        end
+
+        context 'multiple pending sell limit orders' do
+          let(:pending_orders) {
+            [
+              create(:pending_sell_limit_order, price: order_price, quantity: 500, product: product),
+              create(:pending_sell_limit_order, price: order_price, quantity: 250, product: product),
+            ]
+          }
+          it 'should process the trades' do
+            trades.length.should == 2
+            pending_orders.each { |o| o.should be_filled }
+          end
         end
 
       end # single open buy limit order

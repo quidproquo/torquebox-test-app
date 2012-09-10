@@ -1,6 +1,6 @@
 class Trade < ActiveRecord::Base
 
-  attr_accessible :buy_account, :sell_account, :product,
+  attr_accessible :buy_account_id, :sell_account_id, :product_id,
     :buy_order, :sell_order, :price, :quantity
 
   # Associations:
@@ -11,6 +11,15 @@ class Trade < ActiveRecord::Base
   belongs_to :product
 
   has_many :transactions, as: :transactable, class_name: 'AccountTransaction'
+
+  # Validation:
+  validates_presence_of :price
+  validates_presence_of :quantity
+  validates_presence_of :buy_order_id
+  validates_presence_of :sell_order_id
+  validates_presence_of :buy_account_id
+  validates_presence_of :sell_account_id
+  validates_presence_of :product_id
 
   # Properties:
   def value
@@ -26,22 +35,22 @@ class Trade < ActiveRecord::Base
   def build_transactions
     # Debit cash from buy account
     self.transactions.build(transaction_type: AccountTransaction.transaction_types.debit,
-      account: buy_account, product: Product.cash_product,
+      account_id: self.buy_account_id, product_id: Product.cash_product.id,
       cost_basis: 1, quantity: self.value)
 
     # Credit shares to buy account
     self.transactions.build(transaction_type: AccountTransaction.transaction_types.credit,
-      account: buy_account, product: self.product,
+      account_id: self.buy_account_id, product_id: self.product_id,
       cost_basis: self.price, quantity: self.quantity)
 
     # Credit cash to buy account
     self.transactions.build(transaction_type: AccountTransaction.transaction_types.credit,
-      account: sell_account, product: Product.cash_product,
+      account_id: self.sell_account_id, product_id: Product.cash_product.id,
       cost_basis: 1, quantity: self.value)
 
     # Debit shares from sell account
     self.transactions.build(transaction_type: AccountTransaction.transaction_types.debit,
-      account: sell_account, product: self.product,
+      account_id: self.sell_account_id, product_id: self.product_id,
       cost_basis: self.price, quantity: self.quantity)
   end
 
@@ -58,10 +67,13 @@ class Trade < ActiveRecord::Base
         buy_order = order2
         sell_order = order1
       end
-      Trade.create(buy_account: buy_order.account, sell_account: sell_order.account,
-        product: buy_order.product, buy_order: buy_order, sell_order: sell_order,
+      quantity = get_trade_quantity(order1, order2)
+      order1.fill_quantity(quantity)
+      order2.fill_quantity(quantity)
+      Trade.create(buy_account_id: buy_order.account_id, sell_account_id: sell_order.account_id,
+        product_id: buy_order.product_id, buy_order: buy_order, sell_order: sell_order,
         price: get_trade_price(order1, order2),
-        quantity: get_trade_quantity(order1, order2))
+        quantity: quantity)
     end
 
     def get_trade_price(order1, order2)

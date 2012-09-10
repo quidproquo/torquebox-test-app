@@ -3,26 +3,19 @@ require 'lib/collections/tree_set'
 
 
 describe TreeSet do
-  let(:comparator) { nil }
-  subject { TreeSet.new(&comparator) }
+  subject { TreeSet.new }
 
   describe :initialize do
 
-    context 'without comparator' do
-      subject { TreeSet.new }
-      its(:comparator) { should_not == nil }
+    context 'with an array' do
+      # let(:array) { [4, 3, 3, 1] }
+      # subject { TreeSet.new(array) }
+      # it { should == array.sort }
     end
-
-    context 'with custom comparator' do
-      let(:comparator) { Proc.new { |a,b| a <=> b } }
-      subject { TreeSet.new(&comparator) }
-      its(:comparator) { should == comparator }
-    end
-
   end
 
   describe :methods do
-    
+
     describe :insert do
       let(:items) { [] }
       let(:items_expected) { [] }
@@ -67,17 +60,6 @@ describe TreeSet do
 
       end # natural comparator
 
-      context 'with custom comparator' do
-        let(:comparator) { Proc.new { |a,b| a.size <=> b.size } }
-
-        context 'with nonunique items not in order' do
-          let(:items) { ['this', 'this', 'was', 'a', 'funny', 'pepper'] }
-          let(:items_expected) { ['a', 'was', 'this', 'funny', 'pepper'] }
-          it { should == items_expected }
-        end
-
-      end
-
     end # add
 
     describe :get_head_set do
@@ -96,7 +78,7 @@ describe TreeSet do
           let(:item) { 0 }
           it { head_set.should == [] }
         end
-        
+
         context 'when item is same as first item' do
           let(:item) { 1 }
           it { head_set.should == [1] }
@@ -131,12 +113,12 @@ describe TreeSet do
           let(:item) { 0 }
           it { head_set.should == [] }
         end
-        
+
         context 'when item is same as first item' do
           let(:item) { 1 }
           it { head_set.should == [] }
         end
-        
+
         context 'when item is the second item' do
           let(:item) { 2 }
           it { head_set.should == [1] }
@@ -167,5 +149,11 @@ describe TreeSet do
     end # get head set
 
   end # methods
+
+  describe :caching do
+    it 'should be cacheable' do
+      Rails.cache.write('key', subject)
+    end
+  end
 
 end

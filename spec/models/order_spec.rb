@@ -60,11 +60,11 @@ describe Order do
     describe :associations do
 
       describe :product do
-        it { should validate_presence_of(:product) }
+        it { should validate_presence_of(:product_id) }
       end
 
       describe :account do
-        it { should validate_presence_of(:account) }
+        it { should validate_presence_of(:account_id) }
       end
 
     end # associations
@@ -185,6 +185,29 @@ describe Order do
       before { subject.reject!(reject_message) }
       it { should be_rejected }
       its(:message) { should == reject_message }
+    end
+
+    describe :fill_quantity do
+      let(:quantity) { raise ArgumentError }
+      let(:fill_quantity) { raise ArgumentError }
+      subject { Order.new(quantity: quantity) }
+      before { subject.fill_quantity(fill_quantity) }
+
+      context 'when fill quantity is less than pending quantity' do
+        let(:quantity) { 100 }
+        let(:fill_quantity) { 75 }
+        its(:quantity) { should == quantity }
+        its(:pending_quantity) { should == 25 }
+      end
+
+      context 'when fill quantity is equal to pending quantity' do
+        let(:quantity) { 100 }
+        let(:fill_quantity) { quantity }
+        its(:quantity) { should == quantity }
+        its(:pending_quantity) { should == 0 }
+        it { should be_filled }
+      end
+
     end
 
     describe :to_hash do

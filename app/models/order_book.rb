@@ -2,17 +2,14 @@ require 'lib/collections/tree_set'
 
 class OrderBook
 
-  def self.find_by_product_id(product_id)
-    product = Product.find(product_id)
-    pending_orders = Order.get_pending_orders(product)
-    OrderBook.new(product, pending_orders)
-  end
 
   attr_reader :product
 
   def initialize(product, pending_orders = [])
+    puts "OrderBook.initialize().start"
     @product = product
     add_orders(pending_orders)
+    puts "OrderBook.initialize().end"
   end
 
 
@@ -96,6 +93,39 @@ class OrderBook
     buy_limit_orders.get_head_set(order)
   end
 
+  def save!
+    Rails.cache.write(OrderBook.get_cache_key(self.product.id), self)
+  end
+
+  # Class methods:
+
+  class << self
+
+    def get_cache_key(product_id)
+      {product_id_order_book: product_id}
+    end
+
+    def find_by_product_id(product_id)
+      puts "Product.find(#{product_id}).start"
+      product = Product.find(product_id)
+      puts "Product.find(#{product_id}).end"
+
+      puts "Order.get_pending_orders(#{product_id}).start"
+      pending_orders = Order.get_pending_orders(product)
+      puts "Order.get_pending_orders(#{product_id}).end"
+
+      OrderBook.new(product, pending_orders)
+    end
+
+    def find_by_product_id_cached(product_id)
+      unless order_book = Rails.cache.read(self.get_cache_key(product_id))
+        order_book = self.find_by_product_id(product_id)
+        Rails.cache.write(self.get_cache_key(product_id), order_book)
+      end
+      order_book
+    end
+
+  end
 
   protected
 

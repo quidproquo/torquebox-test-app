@@ -236,4 +236,10 @@ describe OrderBook do
 
   end # class_methods
 
+  describe :caching do
+    it 'should be cacheable' do
+      Rails.cache.write('key', subject)
+    end
+  end
+
 end

@@ -60,5 +60,11 @@ module TestApp
     config.assets.version = '1.0'
 
     config.autoload_paths += Dir["#{config.root}/lib/messaging/**/"]
+
+    # Caching
+    config.cache_store = :torque_box_store
+
+    # Logging
+    config.log_level = :debug
   end
 end

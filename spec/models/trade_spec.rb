@@ -13,6 +13,23 @@ describe Trade do
     it { should have_many(:transactions) }
   end
 
+  describe :validation do
+
+    describe :fields do
+      it { should validate_presence_of(:price) }
+      it { should validate_presence_of(:quantity) }
+    end
+
+    describe :associations do
+      it { should validate_presence_of(:buy_order_id) }
+      it { should validate_presence_of(:sell_order_id) }
+      it { should validate_presence_of(:buy_account_id) }
+      it { should validate_presence_of(:sell_account_id) }
+      it { should validate_presence_of(:product_id) }
+    end
+
+  end
+
   describe :properties do
 
     describe :value do
@@ -45,45 +62,51 @@ describe Trade do
         its(:product) { should == buy_order.product }
         its(:price) { should == expected_price }
         its(:quantity) { should == expected_quantity }
+
+        it 'should fill pending quantities on the orders' do
+          subject.buy_order.pending_quantity.should == expected_buy_pending_quantity
+          subject.sell_order.pending_quantity.should == expected_sell_pending_quantity
+        end
+
         it { should have(4).transactions }
         it 'should have valid transactions' do
           # Debit cash from buy account
           transaction_1.should_not be_nil
           transaction_1.id.should_not be_nil
-          transaction_1.transactable.should == subject
+          transaction_1.transactable_id.should == subject.id
           transaction_1.transaction_type.should == AccountTransaction.transaction_types.debit(true)
-          transaction_1.account.should == buy_account
-          transaction_1.product.should == Product.cash_product
+          transaction_1.account_id.should == buy_account.id
+          transaction_1.product_id.should == Product.cash_product.id
           transaction_1.quantity.should == subject.value
           transaction_1.cost_basis.should == 1
 
           # Credit shares to buy account
           transaction_2.should_not be_nil
           transaction_3.id.should_not be_nil
-          transaction_2.transactable.should == subject
+          transaction_2.transactable_id.should == subject.id
           transaction_2.transaction_type.should == AccountTransaction.transaction_types.credit(true)
-          transaction_2.account.should == buy_account
-          transaction_2.product.should == subject.product
+          transaction_2.account_id.should == buy_account.id
+          transaction_2.product_id.should == subject.product.id
           transaction_2.quantity.should == subject.quantity
           transaction_2.cost_basis.should == subject.price
 
           # Credit cash to sell account
           transaction_3.should_not be_nil
           transaction_3.id.should_not be_nil
-          transaction_3.transactable.should == subject
+          transaction_3.transactable_id.should == subject.id
           transaction_3.transaction_type.should == AccountTransaction.transaction_types.credit(true)
-          transaction_3.account.should == sell_account
-          transaction_3.product.should == Product.cash_product
+          transaction_3.account_id.should == sell_account.id
+          transaction_3.product_id.should == Product.cash_product.id
           transaction_3.quantity.should == subject.value
           transaction_3.cost_basis.should == 1
 
           # Debit shares from sell account
           transaction_4.should_not be_nil
           transaction_4.id.should_not be_nil
-          transaction_4.transactable.should == subject
+          transaction_4.transactable_id.should == subject.id
           transaction_4.transaction_type.should == AccountTransaction.transaction_types.debit(true)
-          transaction_4.account.should == sell_account
-          transaction_4.product.should == subject.product
+          transaction_4.account_id.should == sell_account.id
+          transaction_4.product_id.should == subject.product.id
           transaction_4.quantity.should == subject.quantity
           transaction_4.cost_basis.should == subject.price
         end
@@ -103,6 +126,8 @@ describe Trade do
 
       let(:expected_price) { raise ArgumentError }
       let(:expected_quantity) { raise ArgumentError }
+      let(:expected_buy_pending_quantity) { raise ArgumentError }
+      let(:expected_sell_pending_quantity) { raise ArgumentError }
 
       subject { Trade.create_trade(buy_order, sell_order) }
 
@@ -110,6 +135,8 @@ describe Trade do
         let(:buy_quantity) { 1000 }
         let(:sell_quantity) { buy_quantity }
         let(:expected_quantity) { buy_quantity }
+        let(:expected_buy_pending_quantity) { 0 }
+        let(:expected_sell_pending_quantity) { 0 }
 
         context 'buy limit order' do
           let(:buy_order_factory) { :pending_buy_limit_order }

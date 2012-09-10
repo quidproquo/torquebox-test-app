@@ -24,8 +24,8 @@ class Order < ActiveRecord::Base
   validates_presence_of :original_quantity
   validates_presence_of :pending_quantity
 
-  validates_presence_of :product
-  validates_presence_of :account
+  validates_presence_of :product_id
+  validates_presence_of :account_id
 
 
   # Properties:
@@ -72,6 +72,11 @@ class Order < ActiveRecord::Base
   def reject!(message)
     rejected!
     self.message = message
+  end
+
+  def fill_quantity(value)
+    self.pending_quantity -= value
+    self.filled! if self.pending_quantity == 0
   end
 
   def to_hash
