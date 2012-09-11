@@ -2,8 +2,8 @@ require 'lib/collections/tree_set'
 
 class OrderBook
 
-
-  attr_reader :product
+  attr_reader :product, :orders, :buy_orders, :buy_market_orders, :buy_limit_orders,
+    :sell_orders, :sell_market_orders, :sell_limit_orders
 
   def initialize(product, pending_orders = [])
     puts "OrderBook.initialize().start"
