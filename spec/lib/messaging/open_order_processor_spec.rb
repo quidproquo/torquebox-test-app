@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'lib/messaging/open_order_processor'
+require 'lib/messaging/trade_messager'
 
 class DummyOpenOrderProcessor
 
@@ -16,6 +17,7 @@ describe OpenOrderProcessor do
     describe :new do
       subject { DummyOpenOrderProcessor.new }
       it { should be_kind_of(OpenOrderProcessor) }
+      it { should be_kind_of(TradeMessager) }
     end
 
   end #initialize
@@ -33,6 +35,7 @@ describe OpenOrderProcessor do
       before do
         pending_orders
         orders
+        subject.should_receive(:send_sent_trades)
         process_result
         orders.map(&:reload)
         pending_orders.map(&:reload)

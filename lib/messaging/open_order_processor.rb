@@ -1,4 +1,8 @@
+require 'lib/messaging/trade_messager'
+
 module OpenOrderProcessor
+
+  include TradeMessager
 
   def process_open_order_ids(product_id, order_ids)
     puts "process_open_order_ids(#{product_id}, #{order_ids}).start"
@@ -29,6 +33,7 @@ module OpenOrderProcessor
     }
 
     order_book.save!
+    send_sent_trades(trades)
     true
   end
 
