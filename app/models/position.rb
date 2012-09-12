@@ -1,4 +1,5 @@
 class Position < ActiveRecord::Base
+  attr_accessible :account, :product, :quantity
 
   # Associations:
   belongs_to :account
