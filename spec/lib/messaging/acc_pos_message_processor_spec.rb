@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'lib/messaging/acc_pos_message_processor'
+require 'lib/messaging/sent_transaction_processor'
 
 
 describe AccPosMessageProcessor do
@@ -16,6 +17,8 @@ describe AccPosMessageProcessor do
     describe :new do
       subject { AccPosMessageProcessor.new }
       it { should be_an_instance_of(AccPosMessageProcessor) }
+      it { should be_kind_of(SentOrderProcessor) }
+      it { should be_kind_of(SentTransactionProcessor) }
     end
 
   end #initialize
@@ -61,6 +64,26 @@ describe AccPosMessageProcessor do
 
       end #sent_orders
 
+      context :sent_transactions do
+        let(:account) { create(:account) }
+        let(:cash_product) { Product.cash_product }
+        let(:product) { create(:product) }
+        let(:debit_transaction) { create(:debit_transaction, account: account, product: cash_product) }
+        let(:credit_transaction) { create(:credit_transaction, account: account, product: product) }
+        let(:transactions) { [debit_transaction, credit_transaction] }
+        let(:transaction_ids) { transactions.collect { |t| t.id } }
+        let(:message_type) { 'sent_transactions' }
+        let(:message) { {type: message_type, account_id: account.id, transaction_ids: transaction_ids} }
+
+        before do
+          subject.should_receive(:process_sent_transaction_ids).with(transaction_ids)
+        end
+
+        it 'should process the message' do
+          on_message_result.should == true
+        end
+
+      end #sent_orders
     end #on_message
 
   end #methods
