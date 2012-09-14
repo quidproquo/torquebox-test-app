@@ -198,6 +198,14 @@ describe Position do
 
     end # lockup
 
+    describe :unlock do
+      subject { build(:position, locked_quantity: 1000) }
+      before do
+        subject.unlock(1000)
+      end
+      its(:locked_quantity) { should == 0 }
+    end
+
   end # methods
 
 end

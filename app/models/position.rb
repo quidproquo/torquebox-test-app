@@ -36,4 +36,8 @@ class Position < ActiveRecord::Base
   def can_lockup?(amount)
     self.locked_quantity + amount <= self.quantity
   end
+
+  def unlock(amount)
+    self.locked_quantity -= amount
+  end
 end
