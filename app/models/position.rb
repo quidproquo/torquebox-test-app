@@ -6,8 +6,8 @@ class Position < ActiveRecord::Base
   belongs_to :product
 
   # Validations:
-  validates_presence_of :account
-  validates_presence_of :product
+  validates_presence_of :account_id
+  validates_presence_of :product_id
 
 
   # Methods:

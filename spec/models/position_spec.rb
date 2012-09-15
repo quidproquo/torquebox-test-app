@@ -43,8 +43,8 @@ describe Position do
   describe :validation do
 
     describe :account do
-      it { should validate_presence_of(:account) }
-      it { should validate_presence_of(:product) }
+      it { should validate_presence_of(:account_id) }
+      it { should validate_presence_of(:product_id) }
     end
 
   end # validation
